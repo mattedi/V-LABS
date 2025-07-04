@@ -26,6 +26,8 @@ import { TutorButtons } from '../components/tutoring';
 
 // Importação do contexto global da aplicação
 import { useAppContext } from '../context/AppContext';
+// Importação do contexto de progresso
+import { useProgressContext } from '../context/ProgressContext';
 
 /**
  * Componente principal da página inicial
@@ -39,6 +41,9 @@ export default function Home() {
   
   // Obtém o modo atual selecionado pelo usuário do contexto global
   const { currentMode } = useAppContext();
+  
+  // Obtém as recomendações do contexto de progresso
+  const { recommendedContent } = useProgressContext();
   
   /**
    * Efeito para navegação automática baseada no modo selecionado
@@ -61,6 +66,28 @@ export default function Home() {
     }
   }, [currentMode, navigate]); // Dependências: executa quando currentMode ou navigate mudarem
 
+  // Renderizar recomendações
+  const renderRecommendations = () => {
+    if (recommendedContent.length === 0) return null;
+    
+    return (
+      <div className="mt-8 p-4 bg-gray-800 rounded-lg">
+        <h3 className="text-xl font-semibold text-[#B0D2FF]">Recomendado para você</h3>
+        <ul className="mt-2">
+          {recommendedContent.map(item => (
+            <li 
+              key={item.id}
+              className="py-2 cursor-pointer hover:bg-gray-700 px-3 rounded-md"
+              onClick={() => navigate(`/${item.mode}`)}
+            >
+              {item.title} <span className="text-xs bg-blue-500 px-2 py-1 rounded-full ml-2">{item.difficulty}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
   return (
     <>
       {/* Título principal da aplicação - destaque em azul claro */}
@@ -79,6 +106,9 @@ export default function Home() {
 
       {/* Botões para seleção dos diferentes tipos de tutoria */}
       <TutorButtons />
+
+      {/* Adicionar recomendações personalizadas */}
+      {renderRecommendations()}
     </>
   );
 }
