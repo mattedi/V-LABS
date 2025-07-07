@@ -3,6 +3,8 @@ import React from 'react';
 import { FiSettings, FiUpload } from "react-icons/fi";
 import { Button, Avatar } from '../common';
 import ThemeToggle from './TheToggle';
+<Avatar initials="ID" isOnline role="student" />
+
 
 interface HeaderProps {
   showTitle?: boolean;
