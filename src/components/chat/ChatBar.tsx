@@ -8,7 +8,7 @@ interface ChatBarProps {
 
 const ChatBar: React.FC<ChatBarProps> = ({
   compact = false,
-  placeholder = "Exe. Como eu faço para calcular uma fração...",
+  placeholder = "Ex. Como eu faço para calcular uma fração...",
   onSend
 }) => {
   const [message, setMessage] = React.useState<string>('');

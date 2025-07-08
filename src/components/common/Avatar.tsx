@@ -46,12 +46,14 @@ export const Avatar: React.FC<AvatarProps> = ({
         <div
           className={`${sizeClasses[size]} rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold`}
         >
-          {initials ?? '?'}
+          {initials?.toUpperCase() || '??'}
+
         </div>
       )}
 
       {isOnline && (
-        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
+        <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 bg-green-400" />
+
       )}
 
       {role === 'tutor' && (

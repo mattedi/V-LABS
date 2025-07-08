@@ -10,6 +10,7 @@ import TextPage from './pages/TextPage';
 import VoicePage from './pages/VoicePage';
 import EquationPage from './pages/EquationPage';
 import ImagePage from './pages/ImagePage';
+import DocsPage from './pages/DocsPage';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
               <Route path="/voice" element={<Layout><VoicePage /></Layout>} />
               <Route path="/equation" element={<Layout><EquationPage /></Layout>} />
               <Route path="/image" element={<Layout><ImagePage /></Layout>} />
+               <Route path="/docs" element={<DocsPage />} />
             </Routes>
           </ProgressProvider>
         </ChatProvider>
