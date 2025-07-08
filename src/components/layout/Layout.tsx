@@ -1,25 +1,21 @@
 // src/components/layout/Layout.tsx
 import React from 'react';
-import { useAppContext } from '../../context/AppContext';
-import { Sidebar } from '../layout';
-import { Header } from '../layout';
+import Sidebar from './SideBar';
+import Header from './Header';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
-// src/components/layout/Layout.tsx 
- export default function Layout({ children }: LayoutProps) {
-  const { isDarkMode } = useAppContext();
-  
+
+export default function Layout({ children }: LayoutProps): React.JSX.Element {
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`}>
-      <div className="min-h-screen bg-light dark:bg-dark text-black dark:text-white transition-colors duration-300">
-        <Sidebar />
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+      <Sidebar />
+      <main className="ml-44 p-4"> {/* ← Agora inclui o Header */}
         <Header />
-        <main className="ml-0 md:ml-56 p-4">
-          {children}
-        </main>
-      </div>
+        {children}
+      </main>
     </div>
   );
 }
+

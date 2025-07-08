@@ -16,33 +16,33 @@ const TutorButtons: React.FC = () => {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       <button 
         onClick={() => handleNavigation('/text')}
-        className="flex flex-col items-center p-4 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors"
+        className="flex flex-col items-center p-4 bg-blue-100 rounded-lg hover:bg-blue-200 transition-colors text-black dark:text-black"
       >
-        <FiEdit className="text-2xl mb-2 text-blue-600" />
+        <FiEdit className="text-2xl mb-2 text-blue-600 dark:text-blue-600" />
         <span className="text-sm font-medium">Texto</span>
       </button>
       
       <button 
         onClick={() => handleNavigation('/voice')}
-        className="flex flex-col items-center p-4 bg-green-100 rounded-lg hover:bg-green-200 transition-colors"
+        className="flex flex-col items-center p-4 bg-green-100 rounded-lg hover:bg-green-200 transition-colors text-black dark:text-black"
       >
-        <FiMic className="text-2xl mb-2 text-green-600" />
+        <FiMic className="text-2xl mb-2 text-green-600 dark:text-green-600" />
         <span className="text-sm font-medium">Voz</span>
       </button>
       
       <button 
         onClick={() => handleNavigation('/equation')}
-        className="flex flex-col items-center p-4 bg-purple-100 rounded-lg hover:bg-purple-200 transition-colors"
+        className="flex flex-col items-center p-4 bg-purple-100 rounded-lg hover:bg-purple-200 transition-colors text-black dark:text-black"
       >
-        <FiDivide className="text-2xl mb-2 text-purple-600" />
+        <FiDivide className="text-2xl mb-2 text-purple-600 dark:text-purple-600" />
         <span className="text-sm font-medium">Equação</span>
       </button>
       
       <button 
         onClick={() => handleNavigation('/image')}
-        className="flex flex-col items-center p-4 bg-orange-100 rounded-lg hover:bg-orange-200 transition-colors"
+        className="flex flex-col items-center p-4 bg-orange-100 rounded-lg hover:bg-orange-200 transition-colors text-black dark:text-black"
       >
-        <FiPieChart className="text-2xl mb-2 text-orange-600" />
+        <FiPieChart className="text-2xl mb-2 text-orange-600 dark:text-orange-600" />
         <span className="text-sm font-medium">Imagem</span>
       </button>
     </div>

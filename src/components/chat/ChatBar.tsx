@@ -1,110 +1,95 @@
-// src/components/chat/ChatBar.tsx
-// Componente de barra de chat para interação do usuário
+import React, { useRef } from 'react';
 
-// Importações necessárias
-import React from 'react'; // Biblioteca principal do React
-
-/**
- * Interface que define as propriedades (props) do componente ChatBar
- * 
- * @interface ChatBarProps
- * @property {boolean} compact - Se true, aplica padding menor (modo compacto)
- * @property {string} placeholder - Texto de exemplo no input
- * @property {function} onSend - Função callback executada quando usuário envia mensagem
- */
 interface ChatBarProps {
-  compact?: boolean; // Opcional: modo compacto da barra
-  placeholder?: string; // Opcional: texto placeholder do input
-  onSend?: (message: string) => void; // Opcional: função para processar mensagem enviada
+  compact?: boolean;
+  placeholder?: string;
+  onSend?: (message: string) => void;
 }
 
-/**
- * Componente ChatBar - Barra de entrada de chat
- * 
- * Este componente renderiza uma interface de chat com:
- * - Campo de input para digitar mensagens
- * - Botão de envio
- * - Botão adicional (+) para anexos/funções extras
- * 
- * @param {ChatBarProps} props - Propriedades do componente
- * @returns {JSX.Element} Elemento JSX da barra de chat
- */
-const ChatBar: React.FC<ChatBarProps> = ({ 
-  compact = false, // Valor padrão: modo normal (não compacto)
-  placeholder = "Como eu faço para calcular uma fração...", // Texto padrão
-  onSend // Função opcional para envio de mensagem
+const ChatBar: React.FC<ChatBarProps> = ({
+  compact = false,
+  placeholder = "Exe. Como eu faço para calcular uma fração...",
+  onSend
 }) => {
-  // Estado local para controlar o texto digitado no input
   const [message, setMessage] = React.useState<string>('');
+  
+  // Referência para o input de arquivo invisível
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  /**
-   * Função para processar o envio da mensagem
-   * 
-   * Verifica se há texto digitado e se a função onSend foi fornecida
-   * Se sim, executa o callback e limpa o input
-   */
+  // Envio da mensagem
   const handleSend = (): void => {
-    // Verifica se há mensagem (removendo espaços) e se callback existe
     if (message.trim() && onSend) {
-      onSend(message); // Executa função de callback com a mensagem
-      setMessage(''); // Limpa o input após enviar
+      onSend(message);
+      setMessage('');
     }
   };
 
-  /**
-   * Função para detectar tecla Enter no input
-   * 
-   * @param {React.KeyboardEvent} e - Evento de teclado
-   */
+  // Detecção da tecla Enter
   const handleKeyPress = (e: React.KeyboardEvent): void => {
-    // Se a tecla pressionada for Enter, envia a mensagem
     if (e.key === 'Enter') {
       handleSend();
     }
   };
 
-  // Renderização do componente
+  // Clique no botão "+"
+  const handleAttachmentClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // Processamento do arquivo
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      console.log("Arquivo selecionado:", file.name);
+      // Aqui você pode fazer upload, ou passar o arquivo a um callback
+      // Ex: onFileSelect && onFileSelect(file);
+    }
+  };
+
   return (
     <div className={`flex items-center gap-2 ${compact ? 'p-2' : 'p-4'}`}>
-      {/* Container principal da barra de chat */}
-      
-      {/* Container do input com botões */}
       <div className="flex-1 flex items-center border border-gray-300 rounded-lg overflow-hidden">
         
-        {/* Botão de adicionar/anexar (lado esquerdo) */}
-        <button 
+        {/* Botão "+" de anexo */}
+        <button
+          onClick={handleAttachmentClick}
           className="p-3 text-gray-500 hover:text-gray-700 transition-colors"
           title="Adicionar anexo ou função extra"
         >
           <span className="text-xl">+</span>
         </button>
-        
-        {/* Campo de input principal */}
+
+        {/* Input invisível */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+        />
+
+        {/* Campo de texto */}
         <input
           type="text"
-          value={message} // Valor controlado pelo estado
-          onChange={(e) => setMessage(e.target.value)} // Atualiza estado quando usuário digita
-          onKeyPress={handleKeyPress} // Detecta Enter para enviar
-          placeholder={placeholder} // Texto de exemplo
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder={placeholder}
           className="flex-1 p-3 border-none outline-none focus:ring-2 focus:ring-blue-500"
-          aria-label="Campo para digitar mensagem" // Acessibilidade
+          aria-label="Campo para digitar mensagem"
         />
-        
-        {/* Botão de envio (lado direito) */}
-        <button 
-          onClick={handleSend} // Executa envio quando clicado
+
+        {/* Botão de envio */}
+        <button
+          onClick={handleSend}
           className="p-3 bg-blue-500 text-white hover:bg-blue-600 transition-colors"
           title="Enviar mensagem"
-          disabled={!message.trim()} // Desabilita se não há texto
+          disabled={!message.trim()}
         >
           <span className="text-lg">→</span>
         </button>
-        
       </div>
     </div>
   );
 };
 
-// ✅ EXPORT DEFAULT - Permite importar o componente como padrão
-// Exemplo de uso: import ChatBar from './ChatBar';
 export default ChatBar;

@@ -71,7 +71,7 @@ export default function Home() {
     if (recommendedContent.length === 0) return null;
     
     return (
-      <div className="mt-8 p-4 bg-gray-800 rounded-lg">
+      <div className="mt-8 p-4 bg-gray-400 rounded-lg">
         <h3 className="text-xl font-semibold text-[#B0D2FF]">Recomendado para você</h3>
         <ul className="mt-2">
           {recommendedContent.map(item => (
