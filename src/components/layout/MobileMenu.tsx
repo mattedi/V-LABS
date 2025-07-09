@@ -1,3 +1,11 @@
+// Define um componente MobileMenu em React,
+// destinado a exibir um menu lateral em 
+// dispositivos móveis (escondido em telas médias para cima, 
+// visível apenas em telas pequenas). 
+// Ele utiliza o estado interno para controlar a visibilidade do menu,
+// alternando entre um ícone de menu (hambúrguer) e um í
+// cone de fechar (X) quando o menu está aberto ou fechado.
+//  O menu é estilizado com classes CSS e transições para uma experiência de usuário suave.   
 
 import { FiMenu, FiX } from 'react-icons/fi';
 import React, { useState, ReactNode } from 'react';
@@ -31,3 +39,15 @@ export default function MobileMenu({ children }: MobileMenuProps) {
     </div>
   );
 }
+
+// EXTENSÕES
+// - Adicionar animações de transição mais suaves ao abrir/fechar o menu.
+// - Implementar links de navegação dentro do menu.
+// - Permitir que o menu seja fechado ao clicar fora dele.
+// - Adicionar suporte a temas (claro/escuro) no menu.
+// - Implementar um botão de pesquisa dentro do menu.
+// - Adicionar um logotipo ou título no topo do menu.
+// - Implementar um sistema de breadcrumbs para navegação hierárquica.
+// - Permitir que o menu receba props para personalização de estilo.
+// - Adicionar suporte a submenus para categorias de links.
+

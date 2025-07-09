@@ -1,4 +1,14 @@
 // src/components/collaboration/CollaborationPanel.tsx
+//  Implementa um painel interativo de colaboração em tempo real
+//  para uma aplicação educacional como o Vibe Learning Studio. 
+// Trata-se de um componente React com estado interno. 
+// Permitir que o(a) usuário(a)
+//  inicie ou encerre uma sessão de colaboração
+//  com outros participantes (por exemplo,
+//  tutores ou colegas), exibindo quem está conectado com avatares, 
+// nomes e status online.
+
+
 import React, { useState } from 'react';
 
 // Componente Avatar local
@@ -103,3 +113,7 @@ export function CollaborationPanel() {
     </div>
   );
 }
+// EXTENSÕES:
+// - Adicionar suporte a chat em tempo real entre os participantes.
+// - Implementar notificações quando novos usuários entrarem ou saírem da sessão.
+// - Permitir compartilhamento de arquivos ou links dentro da sessão. 

@@ -85,47 +85,14 @@ export const COMPONENT_CHECKLIST = [
   '□ O componente segue a estrutura recomendada da página?'      // Use RECOMMENDED_PAGE_STRUCTURE
 ] as const;
 
-// =====================================
-// COMO USAR ESTE ARQUIVO:
-// =====================================
-
-/**
- * Exemplo 1: Verificar responsabilidades
- * 
- * // ❌ ERRADO - SideBar renderizando título principal
- * function SideBar() {
- *   return (
- *     <div>
- *       <h1>Vibe Learning Studio</h1>  // ← Viola MAIN_TITLE rule
- *     </div>
- *   );
- * }
- * 
- * // ✅ CORRETO - Apenas Header renderiza título principal
- * function Header() {
- *   return (
- *     <div>
- *       <h1>Vibe Learning Studio</h1>  // ← OK, é responsabilidade do Header
- *     </div>
- *   );
- * }
- */
-
-/**
- * Exemplo 2: Usar checklist antes de criar componente
- * 
- * // Antes de criar UserProfile.tsx:
- * // ✅ Não duplica títulos? Sim, vai ter só "Perfil do Usuário"
- * // ✅ Responsabilidade única? Sim, só exibe perfil
- * // ✅ Não renderiza elementos existentes? Sim, é conteúdo novo
- * // ✅ Imports corretos? Sim, não há dependência circular
- * // ✅ Segue estrutura recomendada? Sim, usa MainLayout
- */
-
-/**
- * Exemplo 3: Resolver duplicação
- * 
- * // PROBLEMA: "Escolha sua tutoria" aparece em 2 lugares
- * // SOLUÇÃO: Consultar LAYOUT_RESPONSIBILITIES
- * // RESULTADO: Manter apenas no MainLayout.tsx, remover de outros lugares
- */
+// EXTENSÕES
+// - Adicionar suporte a breadcrumbs para navegação hierárquica.
+// - Implementar um menu dropdown no Header para ações rápidas.
+// - Incluir um botão de ajuda que abra um modal com informações sobre o uso do sistema.
+// - Implementar um sistema de notificações que exiba alertas no Header.
+// - Permitir que o Header receba props para personalização do título.
+// - Adicionar suporte a links de navegação adicionais (ex: Perfil, Configurações).
+// - Implementar um menu lateral responsivo que se adapte a telas menores.
+// - Adicionar animações sutis ao alternar entre temas.
+// - Implementar um sistema de breadcrumbs para navegação hierárquica.
+// - Adicionar um botão de pesquisa que abra uma barra de pesquisa no Header.

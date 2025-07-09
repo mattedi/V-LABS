@@ -1,6 +1,10 @@
 // src/context/ChatContext.tsx
 // Contexto do chat - gerencia todas as mensagens da conversa
-// Permite adicionar, listar e limpar mensagens de qualquer componente
+// Permite adicionar, listar e limpar mensagens de qualquer componente.
+// Este arquivo define o contexto do chat, que é usado para gerenciar as mensagens
+// de uma conversa em uma aplicação React. Ele permite que qualquer componente
+// envolvido pelo `ChatProvider` acesse e manipule as mensagens do chat.
+
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
@@ -93,151 +97,14 @@ export function useChatContext() {
   return context; // Retorna as funções e dados do chat
 }
 
-// =====================================
-// COMO USAR ESTE CONTEXTO:
-// =====================================
-
-/**
- * 1. No App.tsx ou página principal - Envolver com Provider:
- * 
- * function App() {
- *   return (
- *     <AppProvider>
- *       <ChatProvider>
- *         <MainLayout />
- *       </ChatProvider>
- *     </AppProvider>
- *   );
- * }
- */
-
-/**
- * 2. No ChatBar - Para enviar mensagens:
- * 
- * function ChatBar() {
- *   const { addMessage } = useChatContext();
- *   const [inputText, setInputText] = useState('');
- * 
- *   const handleSend = () => {
- *     if (inputText.trim()) {
- *       addMessage(inputText, 'user');  // Adiciona mensagem do usuário
- *       setInputText('');               // Limpa input
- *       
- *       // Simular resposta da IA (exemplo)
- *       setTimeout(() => {
- *         addMessage('Resposta da IA aqui', 'assistant');
- *       }, 1000);
- *     }
- *   };
- * 
- *   return (
- *     <div>
- *       <input 
- *         value={inputText}
- *         onChange={(e) => setInputText(e.target.value)}
- *       />
- *       <button onClick={handleSend}>Enviar</button>
- *     </div>
- *   );
- * }
- */
-
-/**
- * 3. No MessageList - Para exibir mensagens:
- * 
- * function MessageList() {
- *   const { messages } = useChatContext();
- * 
- *   if (messages.length === 0) {
- *     return <p>Nenhuma mensagem ainda...</p>;
- *   }
- * 
- *   return (
- *     <div>
- *       {messages.map(message => (
- *         <div key={message.id} className={message.sender}>
- *           <p>{message.text}</p>
- *           <small>{message.timestamp.toLocaleTimeString()}</small>
- *         </div>
- *       ))}
- *     </div>
- *   );
- * }
- */
-
-/**
- * 4. Em qualquer componente - Para limpar chat:
- * 
- * function ChatHeader() {
- *   const { clearChat, messages } = useChatContext();
- * 
- *   return (
- *     <div>
- *       <h2>Chat ({messages.length} mensagens)</h2>
- *       <button onClick={clearChat}>
- *         Nova Conversa
- *       </button>
- *     </div>
- *   );
- * }
- */
-
-/**
- * 5. Exemplo completo de integração:
- * 
- * function ChatPage() {
- *   const { messages, addMessage } = useChatContext();
- * 
- *   // Mensagem automática de boas-vindas
- *   useEffect(() => {
- *     if (messages.length === 0) {
- *       addMessage('Olá! Como posso ajudar?', 'assistant');
- *     }
- *   }, []);
- * 
- *   return (
- *     <div>
- *       <MessageList />
- *       <ChatBar />
- *     </div>
- *   );
- * }
- */
-
-// =====================================
-// VANTAGENS DESTE CONTEXTO:
-// =====================================
-
-/**
- * ✅ CENTRALIZADO: Todas as mensagens em um lugar só
- * ✅ REATIVO: Quando adiciona mensagem, MessageList atualiza automaticamente
- * ✅ SIMPLES: Apenas 3 funções (messages, addMessage, clearChat)
- * ✅ FLEXÍVEL: Qualquer componente pode enviar/receber mensagens
- * ✅ CONSISTENTE: Estado único, sem duplicação
- * 
- * SEM CONTEXTO (problemático):
- * - Passar mensagens por props em vários níveis
- * - Estado duplicado entre ChatBar e MessageList
- * - Sincronização manual entre componentes
- * 
- * COM CONTEXTO (melhor):
- * - Acesso direto em qualquer componente
- * - Sincronização automática
- * - Código mais limpo
- */
-
-// =====================================
-// POSSÍVEIS MELHORIAS FUTURAS:
-// =====================================
-
-/**
- * 💡 FUNCIONALIDADES QUE PODEM SER ADICIONADAS:
- * 
- * - editMessage(id, newText): Editar mensagens
- * - deleteMessage(id): Apagar mensagens específicas
- * - markAsRead(id): Marcar como lida
- * - saveToLocalStorage(): Persistir conversa
- * - loadFromLocalStorage(): Carregar conversa salva
- * - addTypingIndicator(): Mostrar "digitando..."
- * - addMessageStatus(): Status de envio (enviando/enviado/erro)
- */
+// EXTENSÕES:
+// - Adicionar suporte a mensagens de erro ou status (ex: "Carregando...").
+// - Implementar persistência de chat (salvar no localStorage).
+// - Adicionar suporte a formatação de texto (negrito, itálico, etc.).
+// - Implementar envio de arquivos (imagens, documentos).
+// - Adicionar suporte a emojis ou stickers.
+// - Implementar um sistema de notificações para novas mensagens.
+// - Adicionar suporte a mensagens de áudio ou vídeo.
+// - Implementar um sistema de busca dentro do chat.
+// - Adicionar suporte a respostas rápidas ou sugestões de mensagens.
+// - Implementar um sistema de reações às mensagens (curtir, reagir, etc.).

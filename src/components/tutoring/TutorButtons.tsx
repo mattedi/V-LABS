@@ -1,4 +1,13 @@
 // src/components/tutoring/TutorButtons.tsx
+// Define um componente funcional React que exibe um painel de botões interativos para acessar 
+// diferentes modos de tutoria no sistema Vibe Learning Studio: 
+// Texto, Voz, Equação e Imagem.
+// Cada botão é estilizado com classes Tailwind CSS e ícones do react-icons,
+// e ao clicar em um botão, o usuário é redirecionado para a rota correspondente 
+// usando o hook useNavigate do react-router-dom.
+// Este componente é projetado para ser usado em um layout de tutorias,
+// permitindo que os usuários escolham rapidamente o tipo de interação desejada.
+
 import React from 'react';
 import { FiEdit, FiMic, FiDivide, FiPieChart } from "react-icons/fi";   
 import { useNavigate } from 'react-router-dom';
@@ -50,3 +59,14 @@ const TutorButtons: React.FC = () => {
 };
 
 export default TutorButtons;
+
+// EXTENSÕES
+// - Adicionar animações de transição ao passar o mouse sobre os botões.
+// - Implementar um submenu para configurações avançadas de cada modo.
+// - Permitir que o logotipo seja dinâmico, recebendo props para personalização.
+// - Adicionar suporte a temas (claro/escuro) nos botões.
+// - Implementar um sistema de notificações que exiba alertas nos botões.
+// - Permitir que os botões sejam personalizados via props (ex: cores, ícones).
+// - Adicionar suporte a múltiplos modos de interação (ex: vídeo, chat).
+// - Implementar um sistema de feedback que permita ao usuário avaliar cada modo.
+// - Adicionar suporte a botões de ação rápida (ex: "Iniciar Tutoria", "Parar Tutoria").

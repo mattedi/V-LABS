@@ -1,3 +1,16 @@
+// src/components/common/Button.tsx
+//  Define um componente de botão reutilizável e 
+// estilizado para a interface do projeto V-LABS. 
+// Ele encapsula a lógica de variações visuais 
+// (tema, tamanho, estado de carregamento) e
+//  promove consistência visual e reutilização de código.
+//  O botão pode ser usado em diferentes contextos,
+// como formulários, ações de usuário e feedback visual.
+//  Suporta temas (primário, secundário, perigo, sucesso),
+// tamanhos (pequeno, médio, grande) e estado de carregamento.
+
+
+
 import React, { ButtonHTMLAttributes } from 'react';
 import clsx from 'clsx';
 
@@ -60,3 +73,15 @@ export const Button: React.FC<ButtonProps> = ({
     </button>
   );
 };
+
+// EXTENSÕES:
+// - Adicionar suporte a ícones dentro do botão.
+// - Implementar variantes de botão com ícones pré-definidos.
+// - Permitir customização de cores via props.  
+// - Implementar suporte a botões de ação (ex: "Sim", "Não").
+// - Adicionar suporte a botões com tooltip de ajuda.
+// - Implementar animações de clique ou hover.
+// - Permitir que o botão receba props adicionais para personalização.
+// - Adicionar suporte a botões de carregamento com progresso.
+// - Implementar suporte a botões de grupo (ex: botões de ação múltip
+//  - Adicionar suporte a botões de alternância (toggle).

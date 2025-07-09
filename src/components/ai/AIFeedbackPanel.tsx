@@ -1,6 +1,12 @@
-// src/components/ai/AiFeedbackPanel.tsx - VERSÃO CORRIGIDA
-import React from 'react';
+// src/components/ai/AiFeedbackPanel.tsx
+// O componente AiFeedbackPanel exibe o resultado da análise 
+// de desempenho feita por uma IA sobre uma
+//  tarefa realizada por um estudante.
+// Um painel com: Pontuação, Feedback geral, Pontos fortes, Áreas para melhorar
+//Próximos passos, Botão para nova análise
 
+
+import React from 'react';
 
 interface AiFeedback {
   score: number;
@@ -16,12 +22,27 @@ interface AiFeedbackPanelProps {
   onRetry?: () => void;
 }
 
-export const AiFeedbackPanel: React.FC<AiFeedbackPanelProps> = ({
-  analysisResult,
-  isLoading = false,
-  onRetry
-}) => {
-  // Verificação de segurança para evitar erros
+const Section: React.FC<{ title: string; items: string[]; emptyMessage: string; className?: string }> = ({
+  title,
+  items,
+  emptyMessage,
+  className = '',
+}) => (
+  <div className="mt-3">
+    <h4 className={`font-semibold ${className}`}>{title}</h4>
+    <ul className="list-disc pl-5 mt-1">
+      {items && items.length > 0 ? (
+        items.map((item, index) => (
+          <li key={index} className="text-gray-600">{item}</li>
+        ))
+      ) : (
+        <li className="text-gray-500 italic">{emptyMessage}</li>
+      )}
+    </ul>
+  </div>
+);
+
+export const AiFeedbackPanel: React.FC<AiFeedbackPanelProps> = ({ analysisResult, isLoading = false, onRetry }) => {
   if (isLoading) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md">
@@ -35,106 +56,46 @@ export const AiFeedbackPanel: React.FC<AiFeedbackPanelProps> = ({
 
   if (!analysisResult) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="text-center text-gray-500">
-          <p>Nenhuma análise disponível ainda.</p>
-          {onRetry && (
-            <button 
-              onClick={onRetry}
-              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-              Solicitar Análise
-            </button>
-          )}
-        </div>
+      <div className="bg-white p-6 rounded-lg shadow-md text-center text-gray-500">
+        <p>Nenhuma análise disponível ainda.</p>
+        {onRetry && (
+          <button onClick={onRetry} className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+            Solicitar Análise
+          </button>
+        )}
       </div>
     );
   }
 
+  const { score, feedback, strengths, areasToImprove, nextSteps } = analysisResult;
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
-      <h3 className="text-xl font-bold text-gray-800 mb-4">
-        Feedback da IA
-      </h3>
+      <h3 className="text-xl font-bold text-gray-800 mb-4">Feedback da IA</h3>
 
-      {/* Score Section */}
-      <div className="bg-blue-50 p-4 rounded-lg">
-        <div className="flex items-center justify-between">
-          <span className="text-lg font-semibold text-gray-700">Pontuação:</span>
-          <span className="text-2xl font-bold text-blue-600">
-            {analysisResult.score}%
-          </span>
-        </div>
+      <div className="bg-blue-50 p-4 rounded-lg flex items-center justify-between">
+        <span className="text-lg font-semibold text-gray-700">Pontuação:</span>
+        <span className="text-2xl font-bold text-blue-600">{score}%</span>
       </div>
 
-      {/* Feedback Section */}
-      {analysisResult.feedback && (
+      {feedback && (
         <div className="bg-gray-50 p-4 rounded-lg">
           <h4 className="font-semibold text-gray-700 mb-2">Feedback Geral:</h4>
-          <p className="text-gray-600">{analysisResult.feedback}</p>
+          <p className="text-gray-600">{feedback}</p>
         </div>
       )}
 
-      {/* Pontos Fortes */}
-      <div className="mt-3">
-        <h4 className="font-semibold text-green-400">Pontos Fortes:</h4>
-        <ul className="list-disc pl-5 mt-1">
-          {/* CORREÇÃO: Verificação se strengths existe e é array */}
-          {analysisResult.strengths && Array.isArray(analysisResult.strengths) && analysisResult.strengths.length > 0 ? (
-            analysisResult.strengths.map((item, index) => (
-              <li key={`strength-${index}`} className="text-gray-600">
-                {item}
-              </li>
-            ))
-          ) : (
-            <li className="text-gray-500 italic">Nenhum ponto forte identificado ainda.</li>
-          )}
-        </ul>
-      </div>
+      <Section title="Pontos Fortes:" items={strengths} emptyMessage="Nenhum ponto forte identificado ainda." className="text-green-400" />
+      <Section title="Áreas para Melhorar:" items={areasToImprove} emptyMessage="Nenhuma área de melhoria identificada." className="text-yellow-400" />
+      <Section title="Próximos Passos:" items={nextSteps} emptyMessage="Aguardando mais dados para sugerir próximos passos." className="text-blue-400" />
 
-      {/* Áreas para Melhorar */}
-      <div className="mt-3">
-        <h4 className="font-semibold text-yellow-400">Áreas para Melhorar:</h4>
-        <ul className="list-disc pl-5 mt-1">
-          {/* CORREÇÃO: Verificação se areasToImprove existe e é array */}
-          {analysisResult.areasToImprove && Array.isArray(analysisResult.areasToImprove) && analysisResult.areasToImprove.length > 0 ? (
-            analysisResult.areasToImprove.map((item, index) => (
-              <li key={`improvement-${index}`} className="text-gray-600">
-                {item}
-              </li>
-            ))
-          ) : (
-            <li className="text-gray-500 italic">Nenhuma área de melhoria identificada.</li>
-          )}
-        </ul>
-      </div>
-
-      {/* Próximos Passos */}
-      <div className="mt-3">
-        <h4 className="font-semibold text-blue-400">Próximos Passos:</h4>
-        <ul className="list-disc pl-5 mt-1">
-          {/* CORREÇÃO: Verificação se nextSteps existe e é array */}
-          {analysisResult.nextSteps && Array.isArray(analysisResult.nextSteps) && analysisResult.nextSteps.length > 0 ? (
-            analysisResult.nextSteps.map((item, index) => (
-              <li key={`next-step-${index}`} className="text-gray-600">
-                {item}
-              </li>
-            ))
-          ) : (
-            <li className="text-gray-500 italic">Aguardando mais dados para sugerir próximos passos.</li>
-          )}
-        </ul>
-      </div>
-
-      {/* Botão de Ação */}
-      <div className="mt-6 pt-4 border-t border-gray-200">
-        <button 
-          onClick={onRetry}
-          className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-        >
-          Solicitar Nova Análise
-        </button>
-      </div>
+      {onRetry && (
+        <div className="mt-6 pt-4 border-t border-gray-200">
+          <button onClick={onRetry} className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+            Solicitar Nova Análise
+          </button>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,4 +1,11 @@
-// src/contexts/ProgressContext.tsx - VERSÃO CORRIGIDA
+// src/context/ProgressContext.tsx
+// Contexto de progresso - gerencia o progresso do usuário em diferentes modos de tutoria
+// Permite atualizar progresso, gerar recomendações e calcular progresso geral.
+// Este arquivo define o contexto de progresso, que é usado para gerenciar o progresso do usuário
+// em diferentes modos de tutoria (equação, voz, imagem, texto) em uma aplicação React.
+// Ele permite que qualquer componente envolvido pelo `ProgressProvider` acesse e manipule o progresso do usuário,
+// além de gerar recomendações baseadas no progresso atual.
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Hook useLocalStorage simplificado (definido localmente)
@@ -257,3 +264,15 @@ export const ProgressDisplay: React.FC<{ mode: keyof UserProgress }> = ({ mode }
     </div>
   );
 };
+
+// EXTENSÕES:
+// - Adicionar animações de transição ao atualizar o progresso.
+// - Implementar um sistema de badges ou conquistas baseado no progresso.
+// - Permitir que o usuário personalize as recomendações de conteúdo.
+// - Adicionar suporte a múltiplos usuários com progresso separado.
+// - (1) Implementar um gráfico de progresso visual usando uma biblioteca como Chart.js ou D3.js.
+// - Adicionar notificações quando o usuário atingir novos níveis de maestria.
+// - Implementar um sistema de feedback onde o usuário pode avaliar as recomendações recebidas.
+// - Adicionar suporte a exportação de progresso para formatos como CSV ou JSON.
+// - Implementar um sistema de gamificação onde o progresso desbloqueia novos conteúdos ou funcionalidades.
+// - Adicionar suporte a integração com APIs externas para obter recomendações de conteúdo. 

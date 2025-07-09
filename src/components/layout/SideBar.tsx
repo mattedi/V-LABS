@@ -1,4 +1,10 @@
 // src/components/SideBar.tsx
+// define o componente de barra lateral de navegação da aplicação V-LABS,
+//  construído em React com ícones, 
+// roteamento via react-router-dom e estilização com TailwindCSS.
+//  Ele exibe um logotipo, três itens de menu (Chat, Ajustes e Histórico)
+//  e utiliza o NavLink para navegação,
+//  destacando o item ativo com uma classe CSS específica.
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
@@ -45,3 +51,16 @@ function MenuItem({ to, icon, label }: MenuItemProps) {
     </NavLink>
   );
 }
+
+//EXTENSÕES
+// - Adicionar animações de transição ao passar o mouse sobre os itens do menu.
+// - Implementar um submenu para configurações avançadas.
+// - Permitir que o logotipo seja dinâmico, recebendo props para personalização.
+// - Adicionar suporte a temas (claro/escuro) na barra lateral.
+// - Implementar um sistema de notificações que exiba alertas na barra lateral.
+// - Permitir que a barra lateral seja recolhida/expandida com um botão.
+// - Adicionar suporte a links externos (ex: Documentação, Suporte).
+// - Implementar um sistema de breadcrumbs para navegação hierárquica.
+// - Adicionar um botão de pesquisa que abra uma barra de pesquisa na barra lateral.
+// - Implementar um menu dropdown para ações rápidas (ex: Perfil, Configurações).
+// - Adicionar suporte a múltiplos idiomas, permitindo que os rótulos sejam traduzidos.

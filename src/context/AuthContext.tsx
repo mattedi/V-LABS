@@ -1,4 +1,12 @@
 // src/contexts/AuthContext.tsx - VERSÃO SIMPLIFICADA
+// Implementa um sistema completo de autenticação em React
+// utilizando Context API para gerenciamento de estado global, 
+// com simulação de login/registro, controle de acesso
+// a rotas protegidas e formulário de login.
+// Este código é uma versão simplificada e otimizada,
+// mantendo as funcionalidades essenciais de autenticação
+
+
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
 // Tipos locais (sem import externo)
@@ -321,3 +329,12 @@ export const LoginForm: React.FC = () => {
     </div>
   );
 };
+
+// EXTENSÕES
+// - Implementar suporte a autenticação via OAuth (Google, Facebook, etc.).
+// - Adicionar recuperação de senha e verificação de email.
+// - Implementar um sistema de roles e permissões mais complexo.
+// - Adicionar suporte a autenticação de dois fatores (2FA).
+// - Implementar um sistema de refresh token para manter a sessão ativa.
+// - Adicionar suporte a logout automático após inatividade.
+// - Implementar um sistema de notificações para eventos de autenticação (login, logout, etc.).

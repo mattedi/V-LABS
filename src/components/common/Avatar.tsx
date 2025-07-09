@@ -1,4 +1,12 @@
 // src/components/common/Avatar.tsx
+// serve para exibir identidade visual de um usuário na interface 
+// da aplicação V-LABS. Ele foi desenvolvido com flexibilidade para aceitar imagem, 
+// iniciais, estados de presença (online) e papéis funcionais (ex: tutor). 
+// Renderiza um avatar circular com: Imagem do usuário (se houver src válido),
+//Iniciais (caso a imagem não seja fornecida),
+//Sinalização se o usuário está online (isOnline),
+//Ícone de função específica (por exemplo, "T" para tutor).
+
 import React from 'react';
 
 interface AvatarProps {
@@ -64,3 +72,13 @@ export const Avatar: React.FC<AvatarProps> = ({
     </div>
   );
 };
+
+// Extensões: Aceitar status mais complexos (busy, away, etc.).
+// Tooltip com nome ao passar o mouse.
+// Suporte a bordas temáticas por role.
+// Lazy loading da imagem via loading="lazy".
+// Implementar fallback para imagem quebrada.
+// Adicionar animação de transição ao trocar o estado online/offline.
+// Permitir customização de cores via props.
+// Implementar suporte a múltiplos papéis (ex: estudante, professor).
+// Permitir que o componente receba props adicionais para personalização.

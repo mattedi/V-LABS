@@ -1,4 +1,11 @@
 // src/context/AppContext.tsx
+// Armazena o estado global do app
+// Fornece o contexto aos componentes da aplicação
+// Define um Contexto Global para uma aplicação React. 
+// Define o tipo de tutoria em uso (texto, voz, etc.)
+// Ele permite compartilhar informações globais 
+// (como o modo de tutoria e o tema visual) entre todos os componentes da aplicação, 
+// sem a necessidade de passar essas informações manualmente por props.
 // Contexto global da aplicação - compartilha dados entre todos os componentes
 // Guarda: modo atual de tutoria (texto/voz/etc) e tema (claro/escuro)
 
@@ -83,101 +90,16 @@ export function useAppContext() {
   return context; // Retorna os dados do contexto
 }
 
-// =====================================
-// COMO USAR ESTE CONTEXTO:
-// =====================================
 
-/**
- * 1. No App.tsx - Envolver toda a aplicação:
- * 
- * function App() {
- *   return (
- *     <AppProvider>
- *       <Router>
- *         <Routes>
- *           // suas rotas aqui
- *         </Routes>
- *       </Router>
- *     </AppProvider>
- *   );
- * }
- */
-
-/**
- * 2. Em qualquer componente - Usar o contexto:
- * 
- * function MeuComponente() {
- *   const { currentMode, setCurrentMode, isDarkMode, toggleDarkMode } = useAppContext();
- * 
- *   return (
- *     <div>
- *       <p>Modo atual: {currentMode}</p>
- *       <button onClick={() => setCurrentMode('voice')}>
- *         Mudar para Voz
- *       </button>
- *       
- *       <p>Tema: {isDarkMode ? 'Escuro' : 'Claro'}</p>
- *       <button onClick={toggleDarkMode}>
- *         Trocar Tema
- *       </button>
- *     </div>
- *   );
- * }
- */
-
-/**
- * 3. Exemplo real no TutorButtons:
- * 
- * function TutorButtons() {
- *   const { setCurrentMode } = useAppContext();
- * 
- *   return (
- *     <div>
- *       <button onClick={() => setCurrentMode('text')}>
- *         Texto
- *       </button>
- *       <button onClick={() => setCurrentMode('voice')}>
- *         Voz
- *       </button>
- *     </div>
- *   );
- * }
- */
-
-/**
- * 4. Exemplo no Header para trocar tema:
- * 
- * function Header() {
- *   const { isDarkMode, toggleDarkMode } = useAppContext();
- * 
- *   return (
- *     <header className={isDarkMode ? 'bg-dark' : 'bg-light'}>
- *       <button onClick={toggleDarkMode}>
- *         {isDarkMode ? '🌙' : '☀️'}
- *       </button>
- *     </header>
- *   );
- * }
- */
-
-// =====================================
-// VANTAGENS DESTE CONTEXTO:
-// =====================================
-
-/**
- * ✅ PERSISTÊNCIA: Dados salvos no localStorage (não perde ao recarregar)
- * ✅ GLOBAL: Qualquer componente pode acessar e modificar
- * ✅ REATIVO: Quando muda, todos os componentes que usam são atualizados
- * ✅ TIPADO: TypeScript garante que você use corretamente
- * ✅ SEGURO: Erro claro se usar fora do Provider
- * 
- * SEM CONTEXTO (problemático):
- * - Passar props por 10 níveis de componentes
- * - Estado duplicado em vários lugares
- * - Perda de dados ao recarregar
- * 
- * COM CONTEXTO (melhor):
- * - Acesso direto em qualquer componente
- * - Estado único e consistente
- * - Persistência automática
- */
+// EXTENSÕES
+// - Adicionar suporte a múltiplos modos de tutoria (ex: matemática, ciências, etc.).
+// - Implementar um sistema de temas dinâmico que mude automaticamente com base na hora do dia.
+// - Permitir que o usuário personalize o tema (cores, fontes, etc.).
+// - Implementar um sistema de notificações que informe o usuário sobre mudanças de modo ou tema.
+// - Adicionar suporte a múltiplos idiomas, permitindo que o usuário escolha o idioma da interface.
+// - Implementar um sistema de feedback que permita ao usuário avaliar cada modo de tutoria.
+// - Adicionar suporte a perfis de usuário, permitindo que cada usuário tenha suas próprias preferências de modo e tema.
+// - Implementar um sistema de histórico que registre as mudanças de modo e tema do usuário.
+// - Adicionar suporte a temas personalizados via props, permitindo que o usuário escolha entre diferentes estilos visuais.
+// - Implementar um sistema de autenticação que permita ao usuário salvar suas preferências de modo e tema em um servidor.  
+// - Adicionar suporte a temas com cores personalizadas definidas pelo usuário.

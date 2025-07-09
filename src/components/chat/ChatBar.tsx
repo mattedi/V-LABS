@@ -1,91 +1,112 @@
-import React, { useRef } from 'react';
+// O componente ChatBar, desenvolvido em React com TypeScript,
+//  é um campo de entrada de mensagens com suporte a envio de texto e anexos. 
+// Ele é um componente de interface gráfica frequentemente
+//  usado em aplicações de chat ou assistentes interativos, 
+// como no contexto do Vibe Learning Studio.
+
+import React, { useRef, useState } from 'react';
+import { FiPlus, FiSend } from 'react-icons/fi';
 
 interface ChatBarProps {
   compact?: boolean;
   placeholder?: string;
-  onSend?: (message: string) => void;
+  onSend?: (message: string) => Promise<void> | void;
+  onFileSelect?: (files: File[]) => void;
+  allowedFileTypes?: string[]; // ex: ['image/png', 'application/pdf']
 }
 
 const ChatBar: React.FC<ChatBarProps> = ({
   compact = false,
   placeholder = "Ex. Como eu faço para calcular uma fração...",
-  onSend
+  onSend,
+  onFileSelect,
+  allowedFileTypes = ['image/png', 'image/jpeg', 'application/pdf']
 }) => {
-  const [message, setMessage] = React.useState<string>('');
-  
-  // Referência para o input de arquivo invisível
+  const [message, setMessage] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Envio da mensagem
-  const handleSend = (): void => {
-    if (message.trim() && onSend) {
-      onSend(message);
+  const handleSend = async () => {
+    if (!message.trim() || !onSend) return;
+    try {
+      setIsSending(true);
+      await onSend(message);
       setMessage('');
+    } finally {
+      setIsSending(false);
     }
   };
 
-  // Detecção da tecla Enter
-  const handleKeyPress = (e: React.KeyboardEvent): void => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSend();
     }
   };
 
-  // Clique no botão "+"
   const handleAttachmentClick = () => {
     fileInputRef.current?.click();
   };
 
-  // Processamento do arquivo
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      console.log("Arquivo selecionado:", file.name);
-      // Aqui você pode fazer upload, ou passar o arquivo a um callback
-      // Ex: onFileSelect && onFileSelect(file);
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file =>
+      allowedFileTypes.includes(file.type)
+    );
+
+    if (validFiles.length && onFileSelect) {
+      onFileSelect(validFiles);
     }
+
+    // Limpa para permitir re-seleção do mesmo arquivo
+    e.target.value = '';
   };
 
   return (
     <div className={`flex items-center gap-2 ${compact ? 'p-2' : 'p-4'}`}>
-      <div className="flex-1 flex items-center border border-gray-300 rounded-lg overflow-hidden">
+      <div className="flex-1 flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white dark:bg-gray-800">
         
-        {/* Botão "+" de anexo */}
+        {/* Botão "+" */}
         <button
           onClick={handleAttachmentClick}
-          className="p-3 text-gray-500 hover:text-gray-700 transition-colors"
-          title="Adicionar anexo ou função extra"
+          className="p-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+          title="Adicionar anexo"
         >
-          <span className="text-xl">+</span>
+          <FiPlus className="text-xl" />
         </button>
 
-        {/* Input invisível */}
         <input
           type="file"
           ref={fileInputRef}
+          multiple
           onChange={handleFileChange}
           className="hidden"
         />
 
-        {/* Campo de texto */}
+        {/* Campo de entrada de mensagem */}
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
           placeholder={placeholder}
-          className="flex-1 p-3 border-none outline-none focus:ring-2 focus:ring-blue-500"
-          aria-label="Campo para digitar mensagem"
+          className="flex-1 p-3 border-none outline-none bg-transparent text-gray-800 dark:text-white"
+          aria-label="Digite sua mensagem"
         />
 
         {/* Botão de envio */}
         <button
           onClick={handleSend}
-          className="p-3 bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+          className={`p-3 transition-colors ${
+            isSending ? 'bg-gray-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'
+          } text-white`}
           title="Enviar mensagem"
-          disabled={!message.trim()}
+          disabled={!message.trim() || isSending}
         >
-          <span className="text-lg">→</span>
+          {isSending ? (
+            <div className="animate-spin h-5 w-5 border-b-2 border-white rounded-full mx-auto" />
+          ) : (
+            <FiSend className="text-xl" />
+          )}
         </button>
       </div>
     </div>
@@ -93,3 +114,15 @@ const ChatBar: React.FC<ChatBarProps> = ({
 };
 
 export default ChatBar;
+
+//EXTENSÕES:
+// - Adicionar suporte a emojis ou formatação de texto (negrito, itálico).
+// - Implementar envio de mensagens por voz usando Web Speech API.  
+// - Permitir envio de mensagens com botões de ação (ex: "Sim", "Não").
+// - Implementar histórico de mensagens com rolagem automática.
+// - Adicionar suporte a mensagens de áudio ou vídeo.
+// - Implementar detecção automática de links e pré-visualização.
+// - Integrar com um backend real para persistência de mensagens.
+// - Adicionar suporte a temas personalizados (claro/escuro).
+// - Implementar notificações de novas mensagens usando Web Notifications API.
+// - Adicionar suporte a atalhos de teclado para envio rápido (ex: Ctrl+Enter).
