@@ -2,10 +2,8 @@
 
 /**
  * Configuração do Jest para testes da aplicação VL Studio
- * 
- * Este arquivo define todas as configurações necessárias para executar
+  * Este arquivo define todas as configurações necessárias para executar
  * testes unitários e de integração em um projeto React com TypeScript.
- * 
  * Funcionalidades configuradas:
  * - Ambiente de teste simulando browser (jsdom)
  * - Suporte completo a TypeScript e JSX
@@ -13,7 +11,6 @@
  * - Configuração de cobertura de código
  * - Padrões de busca por arquivos de teste
  * - Transformações para diferentes tipos de arquivo
- * 
  * Framework: Jest v29+ (compatível com React Testing Library)
  * Linguagens: TypeScript, JavaScript, JSX, TSX
  * 
@@ -159,3 +156,6 @@ module.exports = {
     '!src/serviceWorker.ts',
   ],
 };
+
+//EXTENSÕES
+// Extensão para calcular o nível de maestria

@@ -2,11 +2,9 @@
 
 /**
  * Página dedicada ao modo de voz da aplicação
- * 
  * Esta página permite aos usuários interagir com o assistente através de comandos
  * de voz, fornecendo uma interface completa para gravação, processamento e
  * reprodução de áudio para comunicação natural.
- * 
  * Funcionalidades principais:
  * - Gravação de comandos de voz em tempo real
  * - Conversão de voz para texto (Speech-to-Text)
@@ -14,7 +12,6 @@
  * - Síntese de voz para respostas (Text-to-Speech)
  * - Interface visual com feedback de status
  * - Instruções claras de uso
- * 
  * Interface implementada:
  * - Botão de gravação com estados visuais
  * - Indicadores de atividade (animações pulsantes)
@@ -136,3 +133,18 @@ export default function VoicePage() {
     </MainLayout>
   );
 }
+
+// EXTENSÕES FUTURAS:
+// - Implementar integração com APIs de Speech-to-Text e Text-to-Speech
+// - Adicionar feedback visual e sonoro durante o processamento
+// - Implementar histórico de comandos de voz
+// - Adicionar suporte a múltiplos idiomas e sotaques
+// - Implementar reconhecimento de comandos específicos (ex: "ajuda", "configurações")
+// - Adicionar suporte a comandos personalizados e macros de voz
+// - Implementar um sistema de aprendizado contínuo para melhorar a precisão
+// - Adicionar suporte a comandos de voz offline (armazenamento local)
+// - Implementar um sistema de feedback do usuário para melhorar a experiência
+// - Adicionar suporte a integração com dispositivos IoT (ex: controle de luzes, temperatura)
+// - Implementar um sistema de segurança para autenticação por voz
+// - Adicionar suporte a comandos de voz contextuais (ex: "no chat", "na imagem")
+// - Implementar um sistema de personalização de voz do assistente

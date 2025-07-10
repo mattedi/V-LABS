@@ -1,4 +1,10 @@
 // src/hooks/useAiFeedback.ts - VERSÃO SIMPLIFICADA E FUNCIONAL
+// Este hook gerencia o feedback de IA para diferentes modos de tutoria,
+// fornecendo análise de desempenho, feedback personalizado e recomendações para o usuário.
+// Ele é projetado para ser usado em diferentes contextos de tutoria (equação, voz, imagem, texto),
+// permitindo que o usuário receba uma análise detalhada de seu desempenho em cada modo.
+// Importações do React e hooks
+
 import { useState } from 'react';
 
 // Tipos locais (sem import externo)
@@ -252,3 +258,16 @@ export function useVoiceFeedback() {
     clearFeedback
   };
 }
+
+// EXTENSÕES:
+// - Adicionar suporte a feedback de imagem (useImageFeedback).
+// - Implementar feedback de texto (useTextFeedback).
+// - Criar um hook genérico para feedback que possa ser reutilizado em diferentes modos.
+// - Implementar um sistema de histórico de feedback para cada modo.
+// - Adicionar suporte a feedback em tempo real durante a interação do usuário.
+// - Implementar um sistema de notificações para alertar o usuário sobre novos feedbacks.
+// - Adicionar suporte a múltiplos idiomas no feedback.
+// - Implementar um sistema de análise de tendências no feedback ao longo do tempo.
+// - Adicionar suporte a feedback visual (gráficos, tabelas) para melhor compreensão.
+// - Implementar um sistema de gamificação baseado no feedback recebido (ex: conquistas, pontos).
+// - Adicionar suporte a feedback colaborativo, onde múltiplos usuários podem comentar ou avaliar o feedback recebido.

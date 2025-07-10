@@ -2,11 +2,9 @@
 
 /**
  * Configurações globais para ambiente de testes Jest
- * 
  * Este arquivo é executado automaticamente antes de cada arquivo de teste,
  * fornecendo configurações, mocks e extensões necessárias para testar
  * componentes React que usam APIs do navegador.
- * 
  * Configurações incluídas:
  * - Extensões de matchers do Testing Library
  * - Mock para matchMedia (media queries)

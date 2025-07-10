@@ -1,10 +1,8 @@
 /**
  * Página inicial da aplicação VL Studio
- * 
  * Esta é a página principal que serve como hub central da aplicação,
  * fornecendo acesso aos diferentes modos de tutoria (equação, voz, imagem)
  * e interface de chat para interação com o usuário.
- * 
  * Funcionalidades principais:
  * - Navegação automática baseada no modo selecionado
  * - Interface de chat integrada
@@ -112,3 +110,19 @@ export default function Home() {
     </>
   );
 }
+
+// EXTENSÕES:
+// - Adicionar animações de transição ao navegar entre modos de tutoria.
+// - Implementar um sistema de notificações para alertar o usuário sobre novas mensagens no chat.
+// - Permitir que o usuário personalize a interface do chat (ex: temas, fontes).
+// - Implementar um sistema de badges ou conquistas baseado no uso dos modos de tutoria.
+// - Adicionar suporte a múltiplos chats simultâneos com diferentes usuários.
+// - Implementar um sistema de feedback para o usuário avaliar a eficácia dos modos de tutoria.
+// - Adicionar um histórico de chat que permita ao usuário revisar conversas anteriores.
+// - Implementar um sistema de recomendações personalizadas baseado no histórico de chat e progresso do usuário.
+// - Adicionar suporte a emojis e reações nas mensagens do chat.
+// - Implementar um sistema de pesquisa para encontrar mensagens específicas no chat.
+// - Adicionar suporte a anexos (imagens, arquivos) nas mensagens do chat.
+// - Implementar um sistema de integração com redes sociais para compartilhar conquistas ou progresso.
+// - Adicionar um modo escuro/ claro para a interface do chat.
+// - Implementar um sistema de ajuda ou FAQ integrado ao chat para responder perguntas comuns.

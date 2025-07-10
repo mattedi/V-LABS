@@ -2,11 +2,9 @@
 
 /**
  * Página dedicada ao modo de texto da aplicação
- * 
  * Esta página permite aos usuários trabalhar com processamento e análise
  * de texto, fornecendo ferramentas para entrada, edição, correção e
  * análise de conteúdo textual.
- * 
  * Funcionalidades principais:
  * - Entrada e edição de texto livre
  * - Correção gramatical e ortográfica
@@ -63,3 +61,18 @@ export default function TextPage() {
     </MainLayout>
   );
 }
+
+// EXTENSÕES:
+// - Implementar um editor de texto rico com formatação avançada (negrito,
+//   itálico, listas, links)
+// - Adicionar correção gramatical e ortográfica em tempo real
+// - Implementar análise de sentimento do texto inserido
+// - Adicionar suporte a tradução entre idiomas
+// - Implementar resumo automático de textos longos
+// - Adicionar detecção de plágio com comparação de textos
+// - Implementar sugestões de melhorias de estilo e clareza
+// - Adicionar suporte a múltiplos formatos de exportação (PDF, DOCX,
+//   Markdown)
+// - Implementar integração com APIs de IA para análise avançada de texto
+// - Adicionar histórico de textos processados com visualização rápida
+// - Implementar um sistema de feedback do usuário sobre a eficácia das

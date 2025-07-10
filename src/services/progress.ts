@@ -1,4 +1,7 @@
 // src/services/progress.ts - VERSÃO COMPLETA E FUNCIONAL
+// Este serviço gerencia o progresso do usuário em diferentes modos de aprendizado
+// e fornece métodos para atualizar, calcular e recuperar o progresso.
+
 import { useState, useEffect } from 'react';
 
 // Tipos locais para evitar imports externos
@@ -573,3 +576,7 @@ export function useProgress(userId: string = 'demo-user') {
     refetch: loadProgress
   };
 }
+
+// EXTENSÕES:
+// Extensão para calcular o nível de maestria
+// Extensão para calcular o nível de maestria baseado no progresso

@@ -1,4 +1,10 @@
 // src/pages/DocsPage.tsx
+// src/pages/DocsPage.tsx
+// Documentação do V-LABS
+// Esta página fornece uma visão geral do projeto V-LABS, suas funcionalidades e 
+// tecnologias utilizadas.
+// A documentação é construída com React e Tailwind, e inclui suporte a IA multimodal.
+// src/pages/DocsPage.tsx
 
 import React from 'react';
 
@@ -28,3 +34,16 @@ export default function DocsPage() {
     </div>
   );
 }
+
+//EXTENSÕES:
+// - Adicionar links para tutoriais ou vídeos explicativos sobre o uso do V-LABS.
+// - Implementar uma seção de perguntas frequentes (FAQ) para ajudar novos usuários.
+// - Incluir exemplos de código para cada funcionalidade principal.
+// - Adicionar uma seção de "Começando" com instruções passo a passo para novos
+//   usuários.
+// - Implementar um sistema de feedback onde os usuários podem sugerir melhorias na documentação.
+// - Adicionar uma seção de "Contribuindo" com diretrizes para desenvolvedores que
+//   desejam contribuir com o projeto.
+// - Incluir uma seção de "Roadmap" para mostrar futuras funcionalidades planejadas.
+// - Implementar um sistema de busca para facilitar a navegação na documentação.
+// - Adicionar uma seção de "Recursos" com links para artigos, livros e cursos relacionados ao V-LABS.

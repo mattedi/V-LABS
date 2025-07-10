@@ -106,3 +106,132 @@ O projeto **V-LABS** foi desenvolvido com um stack moderno e modular, voltado ao
 | **Estilo de Código**    | ESLint + Prettier                              | Padronização de código e formatação automática                              |
 | **Persistência Local**  | `localStorage` via custom hooks                | Armazenamento leve de preferências do usuário (ex: tema escuro)             |
 
+# 📘 Vibe Learning – Plataforma Educacional Multimodal com IA
+
+**Vibe Learning** é uma aplicação educacional interativa desenvolvida em **React + TypeScript**, voltada para o ensino adaptativo por meio de tutoria orientada à pergunta. O sistema integra **modelos de IA**, **módulos colaborativos**, **rastreamento de progresso**, e um conjunto completo de interfaces para tutoria textual, visual, por voz e por equações.
+
+---
+
+## 🧱 Estrutura do Projeto
+
+```bash
+V-LABS/
+│
+├── src/
+│   ├── components/              # Componentes UI organizados por domínio funcional
+│   │   ├── ai/                  # Painéis e retornos do módulo de IA
+│   │   ├── chat/                # ChatBar, mensagens, lista
+│   │   ├── collaboration/       # Painel de colaboração em tempo real
+│   │   ├── common/              # Componentes reutilizáveis (Avatar, Button, etc.)
+│   │   ├── layout/              # Header, Sidebar, Menu, Layout principal
+│   │   └── tutoring/            # Botões e ações de tutoria
+│   │
+│   ├── context/                 # Contextos globais da aplicação (Theme, Auth, Progress, etc.)
+│   ├── hooks/                   # Hooks personalizados
+│   ├── pages/                   # Páginas principais (rotas)
+│   ├── services/                # Acesso à API e funções de backend
+│   ├── setupTest/              # Configuração e arquivos de teste unitário com Jest
+│   ├── types/                  # Tipos TypeScript globais
+│   ├── App.tsx                 # Componente raiz da aplicação
+│   ├── main.tsx                # Ponto de entrada com ReactDOM
+│   └── index.css               # Estilos globais
+│
+├── public/
+│   └── index.html              # HTML base
+│
+├── tailwind.config.js         # Configuração TailwindCSS
+├── vite.config.js             # Configuração do Vite (build tool)
+├── postcss.config.cjs         # Configuração PostCSS
+├── jest.config.js             # Configuração Jest para testes
+├── package.json               # Dependências e scripts
+└── README.md                  # Documentação (este arquivo)
+
+
+| Tecnologia                 | Função Principal                                    |
+| -------------------------- | --------------------------------------------------- |
+| **React + TypeScript**     | Framework principal com tipagem estática            |
+| **Vite**                   | Bundler e dev server rápido                         |
+| **TailwindCSS**            | Estilização utilitária responsiva                   |
+| **Context API**            | Gerenciamento de estado local/global                |
+| **Jest + Testing Library** | Testes unitários dos componentes                    |
+| **Axios/Fetch**            | Comunicação com API (camada `services/`)            |
+| **IA Backend**             | Módulo de inferência via APIs externas (modelo LLM) |
+| **PostgreSQL** (esperado)  | Persistência dos dados de usuários e interações     |
+
+
+🧠 Funcionalidades Principais
+🟢 Tutoria Multimodal
+Tutoria via texto, voz, imagem e equações.
+
+Componente: TutorButtons.tsx
+
+🧠 Módulo de IA
+Comunicação com modelo inteligente para gerar feedback e respostas.
+
+Componente: AIFeedbackPanel.tsx
+
+💬 Chat Integrado
+Comunicação dinâmica entre usuário e IA com histórico.
+
+Componentes: ChatBar.tsx, MessageList.tsx
+
+🧩 Progresso e Avaliação
+Rastreamento de domínio e nível de domínio por contexto.
+
+Contexto: ProgressContext.tsx
+
+🧾 Autenticação
+Simulação de login, autenticação e roles de acesso.
+
+Contexto: AuthContext.tsx
+
+🛠️ Testes
+Testes unitários com Jest (Button.test.tsx)
+
+Configuração em jest.config.js e setupTests.ts
+
+🚀 Como Executar Localmente
+Pré-requisitos
+Node.js >= 18.x
+
+npm >= 9.x
+
+🔷 1. Node.js como Ambiente de Desenvolvimento
+No contexto do frontend em React, o Node.js serve como plataforma de suporte para:
+
+Função	Ferramentas associadas
+Gerenciamento de pacotes	npm, package.json, package-lock.json
+Transpilação e bundling (dev/build)	vite (executado via Node)
+Processamento de CSS	postcss, tailwind (Node executa a toolchain)
+Testes automatizados	jest (executado em ambiente Node)
+Rodar scripts utilitários	Comandos em scripts no package.json
+
+✅ Resumo: no frontend, o Node.js não executa o React, mas fornece o ambiente de ferramentas necessário para transpilar, empacotar, servir e testar sua aplicação.
+
+🔷 2. Node.js como Backend (Orquestração / Middleware)
+Na arquitetura exibida (com a camada de orquestração e a camada de segurança/middleware), o Node.js pode ser usado também como servidor backend, em um ou mais dos seguintes papéis:
+
+📌 a) API REST
+Criar e expor endpoints via frameworks como:
+
+Express.js
+
+NestJS
+
+Comunicação entre Interface ⇄ Orquestração ⇄ Módulo IA
+
+📌 b) Middleware de Segurança
+Verificação de tokens JWT
+
+Proteção de rotas
+
+Gestão de sessões
+
+Cross-Origin Resource Sharing (CORS)
+
+📌 c) Gateway para IA
+Receber requisição do frontend, encaminhar ao modelo (ex.: FastAPI, OpenAI, Hugging Face), e retornar resposta.
+
+📌 d) Camada de Integração com o Banco de Dados
+Intermediar acesso ao PostgreSQL, MongoDB etc. via ORMs como Prisma, Sequelize ou TypeORM.
+

@@ -1,4 +1,9 @@
-// src/pages/EquationPage.tsx - VERSÃO CORRIGIDA
+// src/pages/EquationPage.tsx 
+//  Página de resolução de equações com feedback de IA
+//  Permite que o usuário insira uma equação e sua solução,
+//  e receba feedback detalhado sobre sua resposta
+//  incluindo pontos fortes, áreas de melhoria e próximos passos sugeridos.
+
 import React, { useState } from 'react';
 import { useAiFeedback } from '../hooks/useAiFeedback';
 
@@ -308,3 +313,20 @@ export default function EquationPage() {
     </div>
   );
 }
+
+// EXTENSÕES:
+// - Adicionar animações de transição ao exibir o feedback.
+// - Implementar validação de entrada para equações e soluções.
+// - Permitir que o usuário visualize exemplos de equações e soluções antes de enviar.
+// - Adicionar suporte a diferentes tipos de equações (ex: quadráticas, lineares
+//   e exponenciais).
+// - Implementar um sistema de histórico para que o usuário possa revisar análises anteriores.
+// - Permitir que o usuário compartilhe suas soluções e feedback em redes sociais.
+// - Adicionar suporte a múltiplas tentativas, onde o usuário pode corrigir sua
+//   solução com base no feedback recebido.
+// - Implementar um sistema de gamificação, onde o usuário ganha pontos por
+//   resolver equações corretamente e melhorar sua pontuação ao longo do tempo.
+// - Adicionar suporte a diferentes níveis de dificuldade, permitindo que o usuário
+//   escolha o nível de complexidade das equações que deseja resolver.
+// - Implementar um sistema de dicas, onde o usuário pode solicitar ajuda para resolver a equação.
+// - Adicionar suporte a gráficos para visualizar soluções de equações complexas.

@@ -1,4 +1,12 @@
 // src/hooks/useAIAnalysis.ts - VERSÃO CORRIGIDA E SIMPLIFICADA
+// src/hooks/useAIAnalysis.ts
+// Este hook gerencia a análise de respostas do usuário usando IA,
+// fornecendo feedback, pontos fortes, áreas de melhoria e próximos passos.
+// Ele é projetado para ser usado em diferentes modos de tutoria (equação, voz, imagem, texto),
+// permitindo que o usuário receba uma análise detalhada de seu desempenho em cada modo.
+// Importações do React e hooks
+
+
 import { useState } from 'react';
 import { useProgressContext } from '../context/ProgressContext';
 
@@ -209,3 +217,16 @@ export function useVoiceAnalysis() {
     clear: clearAnalysis
   };
 }
+
+//EXTENSÕES:
+// - Adicionar suporte a múltiplos idiomas para feedback e próximos passos.
+// - (2)Implementar um sistema de histórico de análises para cada modo.
+// - (3) Permitir que o usuário salve análises anteriores para referência futura.
+// - (1)Adicionar suporte a gráficos ou visualizações para mostrar progresso ao longo do tempo.
+// - Implementar um sistema de gamificação onde o usuário ganha pontos por completar análises.
+// - Adicionar suporte a feedback de múltiplas fontes (ex: professores, colegas).
+// - Implementar um sistema de notificações que alerte o usuário sobre novas análises disponíveis.
+// - Adicionar suporte a análises colaborativas onde múltiplos usuários podem contribuir.
+// - Implementar um sistema de recomendações personalizadas baseado nas análises anteriores.
+// - Adicionar suporte a análises de desempenho em tempo real durante as atividades.
+// - Implementar um sistema de feedback visual (ex: gráficos, tabelas) para as análises.

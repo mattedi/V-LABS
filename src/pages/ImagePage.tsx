@@ -2,11 +2,9 @@
 
 /**
  * Página dedicada ao modo de imagem da aplicação
- * 
  * Esta página permite aos usuários trabalhar com processamento e análise
  * de imagens, fornecendo ferramentas para upload, visualização, edição
  * e reconhecimento de conteúdo em imagens.
- * 
  * Funcionalidades planejadas:
  * - Upload e visualização de imagens
  * - Reconhecimento de texto em imagens (OCR)
@@ -46,3 +44,19 @@ export default function ImagePage() {
     </MainLayout>
   );
 }
+
+// EXTENSÕES:
+// - Implementar upload de imagens com drag-and-drop
+// - Adicionar visualização de imagem com zoom e pan
+// - Integrar OCR para reconhecimento de texto em imagens
+// - Implementar análise de conteúdo visual (detecção de objetos, reconhecimento de padrões)
+// - Adicionar ferramentas de edição básica (corte, rotação, ajuste de brilho/contraste)
+// - Implementar extração de informações matemáticas de imagens (reconhecimento de equações
+// - Adicionar histórico de imagens processadas com visualização rápida
+// - Implementar painel de resultados com feedback sobre o processamento
+// - Adicionar controles de exportação de resultados (texto, imagem, JSON)
+// - Implementar integração com IA para sugestões de melhorias na imagem
+// - Adicionar suporte a múltiplos formatos de imagem (JPEG, PNG, SVG)
+// - Implementar sistema de notificações para alertas de processamento
+// - Adicionar suporte a temas personalizados para a interface de imagem
+// - Implementar um sistema de feedback do usuário sobre a eficácia das ferramentas de imagem

@@ -1,4 +1,11 @@
-// src/services/api.ts - VERSÃO SIMPLIFICADA
+// src/services/api.ts 
+// API Service - Gerencia chamadas HTTP, autenticação e progresso do usuário
+// progresso do usuário e fornece métodos para interagir com a API de forma consistente.
+// Ele utiliza Axios para realizar requisições e inclui interceptores para lidar com autenticação,
+// refresh de tokens e tratamento de erros. Além disso, implementa métodos para upload de arquivos
+// e simulação de delays, útil para desenvolvimento e testes.
+
+
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // Tipos e configurações locais (elimina imports externos)
@@ -415,3 +422,18 @@ class ProgressService {
 }
 
 export const progressService = new ProgressService();
+
+//EXTENSÕES
+// - Implementar cache de progresso para evitar chamadas desnecessárias
+// - Adicionar suporte a múltiplos usuários com IDs dinâmicos
+// - Implementar notificações de progresso em tempo real
+// - Adicionar suporte a exportação de progresso em formatos como JSON ou CSV
+// - Implementar um sistema de recompensas baseado no progresso do usuário
+// - Adicionar suporte a gráficos de progresso usando bibliotecas como Chart.js ou D3.js
+// - Implementar um sistema de feedback onde o usuário pode avaliar as recomendações recebidas
+// - Adicionar suporte a exportação de progresso para formatos como PDF ou imagem
+// - Implementar um sistema de gamificação baseado no progresso (ex: conquistas, pontos)
+// - Adicionar suporte a múltiplos modos de progresso (ex: diário, semanal, mensal)
+// - Implementar um sistema de histórico de progresso onde o usuário pode revisar seu progresso ao longo do tempo
+// - Adicionar suporte a integração com APIs externas para sincronização de progresso
+// - Implementar um sistema de recomendações personalizadas baseado no progresso do usuário

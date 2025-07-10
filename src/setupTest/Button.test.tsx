@@ -2,17 +2,14 @@
 
 /**
  * Arquivo de testes de diagnóstico para o componente Button
- * 
  * Este arquivo contém testes unitários em duas fases:
  * 1. Testes básicos com componente inline (para verificar se o ambiente funciona)
  * 2. Testes do componente Button real (quando disponível)
- * 
  * Propósito de diagnóstico:
  * - Verificar se o ambiente de teste está configurado corretamente
  * - Testar funcionalidades básicas de renderização e interação
  * - Validar se as bibliotecas de teste funcionam adequadamente
  * - Preparar estrutura para testes do componente real
- * 
  * Ferramentas utilizadas:
  * - Jest: Framework de testes
  * - React Testing Library: Utilitários para testar componentes React
@@ -92,49 +89,14 @@ describe('Button component DEBUG', () => {
   });
 });
 
+// EXTENSÃO:
+// Testes adicionais podem ser adicionados aqui para verificar
+// funcionalidades específicas do componente Button real quando disponível.
 /**
- * TESTE 2: Testes do componente Button real (COMENTADO)
- * 
- * Esta seção contém testes para o componente Button real da aplicação.
- * Está comentada porque:
- * - O componente Button.tsx pode não existir ainda
- * - Serve como template para quando o componente for criado
- * - Evita erros de importação durante o desenvolvimento
- * 
- * Para ativar estes testes:
- * 1. Certifique-se de que existe um arquivo Button.tsx na mesma pasta
- * 2. Descomente o código abaixo
- * 3. Ajuste os props conforme a interface real do componente
+ * NOTA:
+ * Estes testes são apenas para diagnóstico inicial.
+ * Quando o componente Button real estiver disponível,
+ * substitua os testes acima pelo componente real e
+ * adicione testes mais complexos para verificar variações,
+ * estados de carregamento, temas, tamanhos, etc.
  */
-
-// TESTE 2: Se você tiver um Button.tsx na mesma pasta, descomente as linhas abaixo:
-/*
-// Importa o componente Button real da aplicação
-import Button from './Button';
-
-// Suite de testes para o componente Button importado
-describe('Button component IMPORT TEST', () => {
-  // Teste básico de importação - verifica se o componente existe
-  test('imports Button successfully', () => {
-    expect(Button).toBeDefined();
-  });
-  
-  // Teste de renderização com props reais
-  test('renders imported Button', () => {
-    // Renderiza com props esperadas (ex: variant)
-    render(<Button variant="primary">Imported Button</Button>);
-    
-    // Verifica se renderiza corretamente
-    const buttonElement = screen.getByText('Imported Button');
-    expect(buttonElement).toBeTruthy();
-  });
-  
-  // TODO: Adicionar mais testes quando o componente estiver pronto:
-  // - Teste de diferentes variantes (primary, secondary, danger, etc.)
-  // - Teste de estados (disabled, loading, etc.)
-  // - Teste de tamanhos (small, medium, large, etc.)
-  // - Teste de ícones e conteúdo customizado
-  // - Teste de acessibilidade (ARIA attributes)
-  // - Teste de classes CSS aplicadas
-});
-*/
