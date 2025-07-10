@@ -7,12 +7,12 @@
 //Sinalização se o usuário está online (isOnline),
 //Ícone de função específica (por exemplo, "T" para tutor).
 
-import React from 'react';
+import React, { useState } from 'react';
 
 interface AvatarProps {
   src?: string;
-  alt?: string;                 // agora opcional
-  initials?: string;            // nova prop
+  alt?: string;
+  initials?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   isOnline?: boolean;
@@ -28,6 +28,8 @@ export const Avatar: React.FC<AvatarProps> = ({
   isOnline = false,
   role,
 }) => {
+  const [imageError, setImageError] = useState(false);
+
   const sizeClasses = {
     xs: 'w-6 h-6',
     sm: 'w-8 h-8',
@@ -36,32 +38,27 @@ export const Avatar: React.FC<AvatarProps> = ({
     xl: 'w-16 h-16',
   };
 
-  const hasImage = Boolean(src);
+  const shouldShowInitials = !src || imageError;
 
   return (
     <div className={`relative inline-block ${className}`}>
-      {hasImage ? (
-        <img
-          src={src!}
-          alt={alt}
-          className={`${sizeClasses[size]} rounded-full object-cover`}
-          onError={(e) => {
-            e.currentTarget.src = '/avatars/default.png';
-          }}
-        />
-      ) : (
-        /* círculo com iniciais */
+      {shouldShowInitials ? (
         <div
           className={`${sizeClasses[size]} rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold`}
         >
-          {initials?.toUpperCase() || '??'}
-
+          {initials?.trim().toUpperCase() || '??'}
         </div>
+      ) : (
+        <img
+          src={src}
+          alt={alt}
+          className={`${sizeClasses[size]} rounded-full object-cover`}
+          onError={() => setImageError(true)}
+        />
       )}
 
       {isOnline && (
         <div className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white dark:border-gray-800 bg-green-400" />
-
       )}
 
       {role === 'tutor' && (
@@ -72,6 +69,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     </div>
   );
 };
+
 
 // Extensões: Aceitar status mais complexos (busy, away, etc.).
 // Tooltip com nome ao passar o mouse.

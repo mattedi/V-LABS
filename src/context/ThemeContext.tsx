@@ -6,47 +6,32 @@
 // acesse e manipule o tema atual, além de aplicar classes CSS correspondentes
 // para estilização. O tema é armazenado no `localStorage` para persistência entre recarregamentos.
 
+// ThemeContext.tsx
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-
-type Theme = 'light' | 'dark';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface ThemeContextType {
-  theme: Theme;
-  toggleTheme: () => void;
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem('theme') as Theme) || 'light'
-  );
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
-  useEffect(() => {
-    const root = window.document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
+  const toggleDarkMode = () => setIsDarkMode(prev => !prev);
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
       {children}
     </ThemeContext.Provider>
   );
 };
 
-export const useTheme = () => {
+export const useThemeContext = (): ThemeContextType => {
   const context = useContext(ThemeContext);
-  if (!context) throw new Error('useTheme must be used within ThemeProvider');
+  if (!context) throw new Error('useThemeContext must be used within a ThemeProvider');
   return context;
 };
 

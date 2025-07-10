@@ -4,22 +4,24 @@
 // Ele utiliza o contexto de tema para acessar o estado atual do tema e a função de alternância.
 
 
+// src/components/layout/TheToggle.tsx
+// Componente funcional para alternância de tema (claro/escuro)
+
 import React from 'react';
-import { useTheme } from '../../context/ThemeContext';
+import { useThemeContext } from '../../context/ThemeContext';
 import { FiMoon, FiSun } from 'react-icons/fi';
 import { Button } from '../common/Button';
 
 export default function ThemeToggle(): React.JSX.Element {
-  const { theme, toggleTheme } = useTheme();
-  const isDark = theme === 'dark';
+  const { isDarkMode, toggleDarkMode } = useThemeContext();
 
-  const icon = isDark ? <FiSun size={18} /> : <FiMoon size={18} />;
-  const label = isDark ? 'Ativar tema claro' : 'Ativar tema escuro';
-  const title = isDark ? 'Tema claro' : 'Tema escuro';
+  const icon = isDarkMode ? <FiSun size={18} /> : <FiMoon size={18} />;
+  const label = isDarkMode ? 'Ativar tema claro' : 'Ativar tema escuro';
+  const title = isDarkMode ? 'Tema claro' : 'Tema escuro';
 
   return (
     <Button
-      onClick={toggleTheme}
+      onClick={toggleDarkMode}
       variant="secondary"
       size="sm"
       className="p-2 rounded-full"
@@ -31,6 +33,7 @@ export default function ThemeToggle(): React.JSX.Element {
     </Button>
   );
 }
+
 
 // EXTENSÕES:
 // - Adicionar animação de transição suave ao alternar entre temas.

@@ -5,9 +5,16 @@
 // mantendo uma aparência consistente e moderna.
 //
 
+// src/components/Header.tsx
+// O componente Header exibe o logotipo, título, 
+// links de navegação e ações como alternar tema e exibir avatar do usuário.
+// Ele é responsivo e se adapta ao tema claro e escuro,
+// mantendo uma aparência consistente e moderna.
+//
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ThemeToggle from './TheToggle'; // Verifique se o nome do arquivo está correto
+import ThemeToggle from './TheToggle'; // ✅ CORRIGIDO: Nome do arquivo estava incorreto
 import { Avatar } from '../common';
 
 interface HeaderProps {
@@ -43,6 +50,17 @@ export default function Header({ showTitle = true }: HeaderProps) {
   );
 }
 
+//EXTENSÕES:
+// - Adicionar suporte a links de navegação adicionais (ex: Perfil, Configurações).
+// - Implementar um menu dropdown para o avatar do usuário com opções de logout e perfil.
+// - Incluir um botão de ajuda que abra um modal com informações sobre o uso do sistema
+// - Adicionar animações sutis ao alternar entre temas.
+// - Implementar um sistema de notificações que exiba alertas no header.  
+// - Permitir que o título seja dinâmico, recebendo props para personalização.
+// - Adicionar suporte a múltiplos idiomas, permitindo que o título seja traduzido.
+// - Implementar um sistema de breadcrumbs para navegação hierárquica.
+// - Adicionar um botão de pesquisa que abra uma barra de pesquisa no header.
+// - Implementar um sistema de breadcrumbs para navegação hierárquica.
 //EXTENSÕES:
 // - Adicionar suporte a links de navegação adicionais (ex: Perfil, Configurações).
 // - Implementar um menu dropdown para o avatar do usuário com opções de logout e perfil.

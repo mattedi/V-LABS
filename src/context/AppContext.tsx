@@ -9,86 +9,57 @@
 // Contexto global da aplicação - compartilha dados entre todos os componentes
 // Guarda: modo atual de tutoria (texto/voz/etc) e tema (claro/escuro)
 
+// src/context/AppContext.tsx
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 
-/**
- * Tipos de tutoria disponíveis na aplicação
- * Usado para trocar entre diferentes modos
- */
 type TutorMode = 'text' | 'voice' | 'equation' | 'image';
 
-/**
- * Define o que o contexto vai compartilhar com todos os componentes
- * Como um "contrato" do que está disponível globalmente
- */
 interface AppContextType {
-  currentMode: TutorMode;                    // Modo atual selecionado
-  setCurrentMode: (mode: TutorMode) => void; // Função para trocar modo
-  isDarkMode: boolean;                       // Se está no tema escuro
-  toggleDarkMode: () => void;                // Função para trocar tema
+  currentMode: TutorMode;
+  setCurrentMode: (mode: TutorMode) => void;
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
+  fontSize: string;
+  setFontSize: (size: string) => void;
 }
 
-/**
- * Cria o contexto (ainda vazio)
- * undefined = valor inicial (será preenchido pelo Provider)
- */
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-/**
- * Provider - componente que fornece os dados para toda a aplicação
- * Deve envolver toda a aplicação no App.tsx
- */
 export function AppProvider({ children }: { children: ReactNode }) {
-  // Estado do modo de tutoria (salva no localStorage automaticamente)
   const [currentMode, setCurrentMode] = useLocalStorage<TutorMode>('tutor-mode', 'text');
-  // Parâmetros: chave no localStorage, valor padrão
-  
-  // Estado do tema escuro (salva no localStorage automaticamente)  
   const [isDarkMode, setIsDarkMode] = useLocalStorage<boolean>('dark-mode', true);
-  // Parâmetros: chave no localStorage, valor padrão (true = escuro por padrão)
-  
-  /**
-   * Função para alternar entre tema claro e escuro
-   * Troca o valor atual: true vira false, false vira true
-   */
+  const [fontSize, setFontSize] = useLocalStorage<string>('font-size', 'text-base');
+
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
-  // Comentário original: A navegação foi removida daqui
-  // O contexto só guarda dados, não navega entre páginas
-  // Cada componente decide o que fazer quando o modo muda
-
   return (
-    <AppContext.Provider 
-      value={{ 
-        currentMode,      // Estado atual
-        setCurrentMode,   // Função para mudar modo
-        isDarkMode,       // Estado do tema
-        toggleDarkMode    // Função para mudar tema
+    <AppContext.Provider
+      value={{
+        currentMode,
+        setCurrentMode,
+        isDarkMode,
+        toggleDarkMode,
+        fontSize,
+        setFontSize,
       }}
     >
       {children}
-      {/* Renderiza todos os componentes filhos */}
     </AppContext.Provider>
   );
 }
 
-/**
- * Hook personalizado para usar o contexto
- * Facilita o uso e adiciona verificação de erro
- */
-export function useAppContext() {
-  // Pega o contexto atual
+export function useAppContext(): AppContextType {
   const context = useContext(AppContext);
-  
-  // Verifica se está sendo usado dentro de um Provider
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAppContext must be used within an AppProvider');
-    // Erro claro se esquecer de envolver a app com AppProvider
   }
-  
-  return context; // Retorna os dados do contexto
+  return context;
 }
+
+
+
 
 
 // EXTENSÕES
