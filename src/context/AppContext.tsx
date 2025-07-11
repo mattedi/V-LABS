@@ -15,6 +15,8 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 type TutorMode = 'text' | 'voice' | 'equation' | 'image';
+type Role = 'student' | 'tutor' | 'teacher';
+type Language = 'pt' | 'en';
 
 interface AppContextType {
   currentMode: TutorMode;
@@ -23,6 +25,12 @@ interface AppContextType {
   toggleDarkMode: () => void;
   fontSize: string;
   setFontSize: (size: string) => void;
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  avatarInitials: string;
+  setAvatarInitials: (val: string) => void;
+  avatarRole: Role;
+  setAvatarRole: (val: Role) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -31,6 +39,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [currentMode, setCurrentMode] = useLocalStorage<TutorMode>('tutor-mode', 'text');
   const [isDarkMode, setIsDarkMode] = useLocalStorage<boolean>('dark-mode', true);
   const [fontSize, setFontSize] = useLocalStorage<string>('font-size', 'text-base');
+  const [language, setLanguage] = useLocalStorage<Language>('language', 'pt');
+
+  const [avatarInitials, setAvatarInitials] = useLocalStorage<string>('avatar-initials', 'MM');
+  const [avatarRole, setAvatarRole] = useLocalStorage<Role>('avatar-role', 'student');
 
   const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
@@ -43,6 +55,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         toggleDarkMode,
         fontSize,
         setFontSize,
+        language,
+        setLanguage,
+        avatarInitials,
+        setAvatarInitials,
+        avatarRole,
+        setAvatarRole,
       }}
     >
       {children}

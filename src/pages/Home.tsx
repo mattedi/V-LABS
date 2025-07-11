@@ -89,8 +89,8 @@ export default function Home() {
   return (
     <>
       {/* Título principal da aplicação - destaque em azul claro */}
-      <h2 className="mt-6 text-center text-4xl font-bold text-[#B0D2FF]">
-        Bem vindo VL Studio
+      <h2 className="mt-9 text-center text-4xl font-bold text-[#B0D2FF]">
+        Bem vindo Vibe Learning Studio
       </h2>
 
       {/* Área de chat - lista de mensagens e barra de entrada */}
@@ -98,8 +98,8 @@ export default function Home() {
       <ChatBar />
 
       {/* Seção de seleção de tutoria */}
-      <h3 className="mt-10 text-center text-3xl">
-        Escolha <span className="text-[#B0D2FF]">sua tutoria</span>
+      <h3 className="mt-9 text-center text-3xl">
+       <span className="text-[#B0D2FF]"> Escolha sua tutoria</span>
       </h3>
 
       {/* Botões para seleção dos diferentes tipos de tutoria */}
