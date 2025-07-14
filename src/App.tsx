@@ -7,20 +7,28 @@
 // Suporta tema escuro/claro, responsividade e diferentes tipos de conteúdo
 
 // types/App.tsx
-
+// src/App.tsx
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AppProvider } from '../src/context/AppContext';           // ✅ CORRIGIDO: ../src/ para sair de types/
-import { ChatProvider } from '../src/context/ChatContext';         // ✅ CORRIGIDO: ../src/ para sair de types/
-import { ProgressProvider } from '../src/context/ProgressContext'; // ✅ CORRIGIDO: ../src/ para sair de types/
-import UnifiedLayout from '../src/components/layout/UnifiedLayout'; // ✅ CORRIGIDO: ../src/ para sair de types/
-import Home from '../src/pages/Home';
-import TextPage from '../src/pages/TextPage';
-import VoicePage from '../src/pages/VoicePage';
-import EquationPage from '../src/pages/EquationPage';
-import ImagePage from '../src/pages/ImagePage';
-import DocsPage from '../src/pages/DocsPage';
-import SettingsPanel from '../src/components/layout/SettingsPanel';
+
+import { AppProvider } from './context/AppContext';
+import { ChatProvider } from './context/ChatContext';
+import { ProgressProvider } from './context/ProgressContext';
+
+import UnifiedLayout from './components/layout/UnifiedLayout';
+
+import Home from './pages/Home';
+import TextPage from './pages/TextPage';
+import VoicePage from './pages/VoicePage';
+import EquationPage from './pages/EquationPage';
+import ImagePage from './pages/ImagePage';
+import DocsPage from './pages/DocsPage';
+import SettingsPanel from './components/layout/SettingsPanel';
+import DashboardPage from './pages/DashBoard';
+import HistoricoPage from './pages/HistoricoPage';
+import CompetencyChartPage from './pages/CompetencyChartPage';
+import StudentTablePage from './pages/StudentTablePage';
+import LearningPathGraph from './components/progress/LearningPathGraph';
 
 export default function App() {
   return (
@@ -28,139 +36,138 @@ export default function App() {
       <AppProvider>
         <ChatProvider>
           <ProgressProvider>
-              <Routes>
-                {/* ✅ REFATORADO: Todas as rotas usando UnifiedLayout com títulos específicos */}
-                <Route 
-                  path="/" 
-                  element={
-                    <UnifiedLayout 
-                      pageTitle="VIBE LEARNING STUDIO"
-                      showChatBar={true}
-                      showTutorButtons={true}
-                    >
-                      <Home />
-                    </UnifiedLayout>
-                  } 
-                />
-                
-                <Route 
-                  path="/text" 
-                  element={
-                    <UnifiedLayout 
-                      pageTitle="Tutoria por Texto"
-                      showChatBar={true}
-                    >
-                      <TextPage />
-                    </UnifiedLayout>
-                  } 
-                />
-                
-                <Route 
-                  path="/voice" 
-                  element={
-                    <UnifiedLayout 
-                      pageTitle="Tutoria por Voz"
-                      showChatBar={true}
-                    >
-                      <VoicePage />
-                    </UnifiedLayout>
-                  } 
-                />
-                
-                <Route 
-                  path="/equation" 
-                  element={
-                    <UnifiedLayout 
-                      pageTitle="Tutoria de Equações"
-                      showChatBar={true}
-                    >
-                      <EquationPage />
-                    </UnifiedLayout>
-                  } 
-                />
-                
-                <Route 
-                  path="/image" 
-                  element={
-                    <UnifiedLayout 
-                      pageTitle="Tutoria por Imagem"
-                      showChatBar={true}
-                    >
-                      <ImagePage />
-                    </UnifiedLayout>
-                  } 
-                />
+            <Routes>
 
-                <Route 
-                  path="/docs" 
-                  element={<DocsPage />} 
-                />
-                
-                <Route 
-                  path="/settings" 
-                  element={
-                    <UnifiedLayout 
-                      pageTitle="Configurações"
-                      showChatBar={false}
-                      showTutorButtons={false}
-                    >
-                      <SettingsPanel />
-                    </UnifiedLayout>
-                  } 
-                />
+              {/* Home/Chat */}
+              <Route
+                path="/"
+                element={
+                  <UnifiedLayout
+                    pageTitle="VIBE LEARNING STUDIO"
+                    showChatBar={true}
+                    showTutorButtons={true}
+                  >
+                    <Home />
+                  </UnifiedLayout>
+                }
+              />
 
-                <Route 
-                  path="/chat" 
-                  element={
-                    <UnifiedLayout 
-                      pageTitle="Chat IA"
-                      showChatBar={true}
-                      showTutorButtons={true}
-                    >
-                      <Home />
-                    </UnifiedLayout>
-                  } 
-                />
-                
-                <Route 
-                  path="/ajustes" 
-                  element={
-                    <UnifiedLayout 
-                      pageTitle="Ajustes"
-                      showChatBar={false}
-                      showTutorButtons={false}
-                    >
-                      <SettingsPanel />
-                    </UnifiedLayout>
-                  } 
-                />
-                
-                <Route 
-                  path="/historico" 
-                  element={
-                    <UnifiedLayout 
-                      pageTitle="Histórico de Conversas"
-                      showChatBar={false}
-                      showTutorButtons={false}
-                    >
-                      <div className="text-center py-12">
-                        <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-400">
-                          Histórico em desenvolvimento
-                        </h2>
-                        <p className="text-gray-500 dark:text-gray-500 mt-4">
-                          Esta funcionalidade será implementada em breve.
-                        </p>
-                      </div>
-                    </UnifiedLayout>
-                  } 
-                />
-              </Routes>
-            </ProgressProvider>
-          </ChatProvider>
-        </AppProvider>
+              <Route
+                path="/chat"
+                element={
+                  <UnifiedLayout
+                    pageTitle="Chat IA"
+                    showChatBar={true}
+                    showTutorButtons={true}
+                  >
+                    <Home />
+                  </UnifiedLayout>
+                }
+              />
+
+              {/* Tutorias */}
+              <Route
+                path="/text"
+                element={
+                  <UnifiedLayout pageTitle="Tutoria por Texto" showChatBar={true}>
+                    <TextPage />
+                  </UnifiedLayout>
+                }
+              />
+
+              <Route
+                path="/voice"
+                element={
+                  <UnifiedLayout pageTitle="Tutoria por Voz" showChatBar={true}>
+                    <VoicePage />
+                  </UnifiedLayout>
+                }
+              />
+
+              <Route
+                path="/equation"
+                element={
+                  <UnifiedLayout pageTitle="Tutoria de Equações" showChatBar={true}>
+                    <EquationPage />
+                  </UnifiedLayout>
+                }
+              />
+
+              <Route
+                path="/image"
+                element={
+                  <UnifiedLayout pageTitle="Tutoria por Imagem" showChatBar={true}>
+                    <ImagePage />
+                  </UnifiedLayout>
+                }
+              />
+
+              {/* Documentos */}
+              <Route path="/docs" element={<DocsPage />} />
+
+              {/* Ajustes */}
+              <Route
+                path="/ajustes"
+                element={
+                  <UnifiedLayout pageTitle="Ajustes" showChatBar={false} showTutorButtons={false}>
+                    <SettingsPanel />
+                  </UnifiedLayout>
+                }
+              />
+
+              {/* Dashboard */}
+              <Route
+                path="/dashboard"
+                element={
+                  <UnifiedLayout pageTitle="Painel de Desempenho" showChatBar={false} showTutorButtons={false}>
+                    <DashboardPage />
+                  </UnifiedLayout>
+                }
+              />
+
+              {/* Progresso */}
+              <Route
+                path="/progresso"
+                element={
+                  <UnifiedLayout pageTitle="Trajetória de Aprendizagem" showChatBar={false} showTutorButtons={false}>
+                    <LearningPathGraph data={[
+                      { date: '2025-07-01', text: 3, voice: 1, image: 2, equation: 0 },
+                      { date: '2025-07-02', text: 5, voice: 0, image: 1, equation: 1 },
+                      { date: '2025-07-03', text: 2, voice: 3, image: 0, equation: 2 },
+                      { date: '2025-07-04', text: 4, voice: 1, image: 3, equation: 1 },
+                    ]} />
+                  </UnifiedLayout>
+                }
+              />
+
+              {/* Histórico com rotas aninhadas */}
+              <Route
+                path="/historico"
+                element={
+                  <UnifiedLayout
+                    pageTitle="Histórico de Desempenho"
+                    showChatBar={false}
+                    showTutorButtons={false}
+                  >
+                    <HistoricoPage />
+                  </UnifiedLayout>
+                }
+              >
+                <Route index element={<CompetencyChartPage />} />
+                <Route path="competencias" element={<CompetencyChartPage />} />
+                <Route path="estudantes" element={<StudentTablePage />} />
+              </Route>
+
+            </Routes>
+          </ProgressProvider>
+        </ChatProvider>
+      </AppProvider>
     </BrowserRouter>
   );
 }
+
+
+
 
 // EXTENSÕES FUTURAS:
 // - Sistema de breadcrumbs dinâmico

@@ -126,3 +126,4 @@ export default function Home() {
 // - Implementar um sistema de integração com redes sociais para compartilhar conquistas ou progresso.
 // - Adicionar um modo escuro/ claro para a interface do chat.
 // - Implementar um sistema de ajuda ou FAQ integrado ao chat para responder perguntas comuns.
+//

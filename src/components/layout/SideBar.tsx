@@ -31,11 +31,17 @@
 // CORRIGIDO: Contextos padronizados com responsabilidades bem definidas
 // useThemeContext para tema, useAppContext para configurações de app
 
-import React, { JSX } from 'react';
+import React, { useState, JSX } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FiMessageCircle, FiSliders, FiClock } from 'react-icons/fi';
-import { useThemeContext } from '../../context/ThemeContext'; // ✅ TEMA
-import { useAppContext } from '../../context/AppContext';     // ✅ CONFIG APP
+import {
+  FiMessageCircle,
+  FiSliders,
+  FiClock,
+  FiChevronDown,
+  FiChevronUp,
+} from 'react-icons/fi';
+import { useThemeContext } from '../../context/ThemeContext';
+import { useAppContext } from '../../context/AppContext';
 
 interface MenuItemProps {
   to: string;
@@ -45,7 +51,7 @@ interface MenuItemProps {
 
 function MenuItem({ to, icon, label }: MenuItemProps): JSX.Element {
   const { isDarkMode } = useThemeContext();
-  
+
   return (
     <NavLink
       to={to}
@@ -53,8 +59,8 @@ function MenuItem({ to, icon, label }: MenuItemProps): JSX.Element {
       aria-label={label}
       className={({ isActive }) =>
         `flex items-center gap-3 w-full px-4 py-2 rounded-lg text-sm transition-colors duration-200
-         ${isActive 
-           ? `${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-300 text-gray-900'} font-semibold` 
+         ${isActive
+           ? `${isDarkMode ? 'bg-gray-700 text-white' : 'bg-gray-300 text-gray-900'} font-semibold`
            : `${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`
          }`
       }
@@ -66,8 +72,9 @@ function MenuItem({ to, icon, label }: MenuItemProps): JSX.Element {
 }
 
 export default function SideBar(): JSX.Element {
-  const { isDarkMode } = useThemeContext();   // ✅ TEMA
-  const { fontSize } = useAppContext();       // ✅ CONFIG APP
+  const { isDarkMode } = useThemeContext();
+  const { fontSize } = useAppContext();
+  const [showHistorico, setShowHistorico] = useState(false);
 
   return (
     <aside
@@ -84,11 +91,39 @@ export default function SideBar(): JSX.Element {
       <nav className="flex flex-col gap-4 w-full">
         <MenuItem to="/chat" icon={<FiMessageCircle size={20} />} label="Chat" />
         <MenuItem to="/ajustes" icon={<FiSliders size={20} />} label="Ajustes" />
-        <MenuItem to="/historico" icon={<FiClock size={20} />} label="Histórico" />
+
+        {/* Menu expandível - Histórico */}
+        <button
+          onClick={() => setShowHistorico(!showHistorico)}
+          className={`flex items-center justify-between w-full px-4 py-2 rounded-lg text-sm transition-colors duration-200 
+            ${isDarkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-200'}`}
+        >
+          <span className="flex items-center gap-2">
+            <FiClock size={20} className="text-blue-400" />
+            Histórico
+          </span>
+          {showHistorico ? <FiChevronUp /> : <FiChevronDown />}
+        </button>
+
+        {showHistorico && (
+          <div className="ml-6 flex flex-col gap-2">
+            <MenuItem
+              to="/historico/competencias"
+              icon={<span className="w-2 h-2 bg-blue-400 rounded-full" />}
+              label="Competências"
+            />
+            <MenuItem
+              to="/historico/estudantes"
+              icon={<span className="w-2 h-2 bg-blue-400 rounded-full" />}
+              label="Estudantes"
+            />
+          </div>
+        )}
       </nav>
     </aside>
   );
 }
+
 
 // EXTENSÕES:
 // - Adicionar animações de transição ao passar o mouse sobre os itens do menu.

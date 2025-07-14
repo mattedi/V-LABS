@@ -1,3 +1,11 @@
+// src/components/progress/LearningPathGraph.tsx
+// O LearningPathGraph exibe um gráfico de linhas 
+// com a evolução do desempenho ou uso dos diferentes
+//  modos de entrada multimodal (texto, voz, imagem, equação)
+//  ao longo do tempo. Ele permite visualizar 
+// a trajetória de aprendizagem do aluno de forma clara e 
+// comparativa entre os diferentes canais expressivos.
+
 import React from 'react';
 import {
   Chart as ChartJS,
@@ -82,3 +90,15 @@ export default function LearningPathGraph({ data }: LearningPathGraphProps): JSX
     </div>
   );
 }
+//ENTENSÕES:
+// - Adicionar filtros para visualizar apenas modos específicos
+// - Implementar animações suaves ao atualizar os dados do gráfico
+// - Permitir exportação do gráfico como imagem ou PDF
+// - Integrar com uma API para obter dados em tempo real
+// - Adicionar tooltip interativo com detalhes de cada ponto
+// - Implementar zoom e pan para explorar períodos específicos
+// - Adicionar comparação com médias de turma ou benchmarks
+// - Implementar exportação dos dados em CSV ou JSON
+// - Adicionar opção de personalização de cores e estilos do gráfico
+// - Integrar com um sistema de notificações para alertar sobre mudanças significativas
+// - Implementar um modo de visualização em tempo real com atualizações dinâmicas

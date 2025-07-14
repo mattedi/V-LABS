@@ -1,25 +1,38 @@
-// TextInput.tsx
+// src/components/multimodal/TextInput.tsx
 import React, { useState } from 'react';
 
-export default function TextInput() {
-  const [text, setText] = useState('');
+interface TextInputProps {
+  onSubmit?: (question: string) => void;
+}
 
-  const handleSubmit = () => {
-    console.log('Texto enviado:', text);
-    // Aqui: enviar ao contexto ou backend
+const TextInput: React.FC<TextInputProps> = ({ onSubmit }) => {
+  const [input, setInput] = useState('');
+
+  const handleSend = () => {
+    const trimmed = input.trim();
+    if (!trimmed) return;
+
+    onSubmit?.(trimmed); // chama o callback se fornecido
+    setInput('');
   };
 
   return (
     <div>
-      <textarea
-        className="w-full p-2 border rounded"
-        placeholder="Digite sua pergunta em texto..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
+      <input
+        className="w-full border rounded px-3 py-2"
+        placeholder="Digite sua pergunta..."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
       />
-      <button onClick={handleSubmit} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+      <button
+        onClick={handleSend}
+        className="bg-blue-600 text-white px-4 py-2 mt-2 rounded hover:bg-blue-700"
+      >
         Enviar
       </button>
     </div>
   );
-}
+};
+
+export default TextInput;
+
