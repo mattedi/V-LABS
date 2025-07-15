@@ -29,6 +29,7 @@ import HistoricoPage from './pages/HistoricoPage';
 import CompetencyChartPage from './pages/CompetencyChartPage';
 import StudentTablePage from './pages/StudentTablePage';
 import LearningPathGraph from './components/progress/LearningPathGraph';
+import UsuariosPage from './pages/UsuariosPage'; // ✅ Certifique-se de que este arquivo exista
 
 export default function App() {
   return (
@@ -105,6 +106,16 @@ export default function App() {
               {/* Documentos */}
               <Route path="/docs" element={<DocsPage />} />
 
+              {/* API - Usuários */}
+              <Route
+                path="/usuarios"
+                element={
+                  <UnifiedLayout pageTitle="Usuários" showChatBar={false} showTutorButtons={false}>
+                    <UsuariosPage />
+                  </UnifiedLayout>
+                }
+              />
+
               {/* Ajustes */}
               <Route
                 path="/ajustes"
@@ -165,7 +176,6 @@ export default function App() {
     </BrowserRouter>
   );
 }
-
 
 
 
