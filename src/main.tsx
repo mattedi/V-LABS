@@ -3,7 +3,6 @@
 // Ele renderiza o componente principal `App` dentro do elemento com id `root`
 // e envolve a aplicação com o `ThemeProvider` para gerenciar o tema (claro/escuro).
 
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';

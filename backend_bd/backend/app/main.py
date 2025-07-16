@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from app.routers import usuarios, perguntas
 
 app = FastAPI()
 
-app.include_router(usuarios.router)
-app.include_router(perguntas.router)
+@app.get("/")
+def root():
+    return {"mensagem": "API está no ar"}
