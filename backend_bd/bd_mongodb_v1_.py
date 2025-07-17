@@ -7,17 +7,10 @@ Original file is located at
     https://colab.research.google.com/drive/1r2xvrUFnSYEJ0EtMUhuBUBXR1ioz0Vf3
 """
 
-!pip install pymongo
 
-!pip install python-jose
-!
 
 from urllib.parse import quote_plus
 print(quote_plus("Vibe1234"))
-
-!pip install pydantic[email]
-
-!pip install passlib[bcrypt]
 
 from pymongo import MongoClient
 from urllib.parse import quote_plus
@@ -349,6 +342,3 @@ def upload_imagem(file: UploadFile = File(...)):
 @app.get("/")
 def root():
     return {"status": "API do Vibe Learning operando"}
-
-!git config --global user.email "mattediblu@gmail.com"
-!git config --global user.name "Mattedi"

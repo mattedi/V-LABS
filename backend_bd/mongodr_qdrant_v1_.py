@@ -7,11 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/10qrnEjlRJNaSmH58CdhZqKXyNG8PSnoi
 """
 
-!pip install pymongo
-
-!pip install qdrant-client
-
-!pip install python-dotenv
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -78,5 +73,3 @@ load_dotenv(".env")
 print("Mongo URI:", os.getenv("MONGO_URI"))
 print("Qdrant URI:", os.getenv("QDRANT_URL"))
 
-!git config --global user.email "mattediblu@gmail.com"
-!git config --global user.name "Mattedi"

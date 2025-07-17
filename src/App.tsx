@@ -31,6 +31,8 @@ import StudentTablePage from './pages/StudentTablePage';
 import LearningPathGraph from './components/progress/LearningPathGraph';
 import UsuariosPage from './pages/UsuariosPage'; // ✅ Certifique-se de que este arquivo exista
 
+import SwaggerDocsPage from './pages/SwaggerDocsPage';
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -150,7 +152,14 @@ export default function App() {
                   </UnifiedLayout>
                 }
               />
-
+<Route
+  path="/api-docs"
+  element={
+    <UnifiedLayout pageTitle="Documentação da API">
+      <SwaggerDocsPage />
+    </UnifiedLayout>
+  }
+/>
               {/* Histórico com rotas aninhadas */}
               <Route
                 path="/historico"
