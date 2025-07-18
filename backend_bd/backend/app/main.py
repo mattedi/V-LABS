@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import usuarios, perguntas  # importa os módulos de rota
+from app.routers import usuarios, perguntas, respostas, embeddings, avaliacoes, logs
 
 app = FastAPI(
     title="Vibe Learning API",
@@ -19,6 +19,12 @@ app = FastAPI(
 # Inclusão dos módulos de rota
 app.include_router(usuarios.router)
 app.include_router(perguntas.router)
+app.include_router(respostas.router)
+app.include_router(embeddings.router)
+app.include_router(avaliacoes.router)
+app.include_router(logs.router)
+
+# Rota de saúde para verificar se a API está funcionando
 
 # Rota básica de saúde
 @app.get("/")

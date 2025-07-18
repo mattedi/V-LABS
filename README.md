@@ -90,21 +90,65 @@ A escolha de tutoria (cards coloridos com ícones) adapta-se ao tema e guia o us
 
 ## 🚀 Tecnologias Utilizadas
 
-O projeto **V-LABS** foi desenvolvido com um stack moderno e modular, voltado ao desenvolvimento frontend escalável, com suporte a contexto de Inteligência Artificial e interatividade multimodal. A seguir, detalham-se as principais tecnologias e suas respectivas finalidades:
+# 🧩 Quadro das Tecnologias por Camada — Vibe Learning Studio
 
-| **Categoria**           | **Tecnologia / Biblioteca**                    | **Finalidade**                                                               |
-|-------------------------|------------------------------------------------|------------------------------------------------------------------------------|
-| **Linguagem**           | TypeScript                                     | Tipagem estática e segurança no desenvolvimento em React                    |
-| **Biblioteca base**     | React                                          | Estrutura declarativa da interface                                          |
-| **Empacotador**         | Vite                                           | Build tool leve, rápido e compatível com ESModules                          |
-| **Estilização**         | TailwindCSS                                    | Framework utilitário para design responsivo, dark mode e tipografia         |
-| **Ícones**              | `react-icons/fi`                               | Ícones vetoriais para componentes visuais                                   |
-| **Estado Global**       | React Context API                              | Gerenciamento de temas, usuário, progresso e dados compartilhados           |
-| **Roteamento**          | `react-router-dom`                             | Navegação entre as páginas de tutoria                                       |
-| **Animações e Efeitos** | TailwindCSS Transitions                        | Animações de hover, transições e responsividade                             |
-| **Testes**              | Jest + React Testing Library *(setup inicial)* | Infraestrutura de testes unitários e de componentes                         |
-| **Estilo de Código**    | ESLint + Prettier                              | Padronização de código e formatação automática                              |
-| **Persistência Local**  | `localStorage` via custom hooks                | Armazenamento leve de preferências do usuário (ex: tema escuro)             |
+## 1. Interface (Frontend)
+
+| Tecnologia            | Função Principal                                                      |
+|------------------------|------------------------------------------------------------------------|
+| React (v18), Vite, TypeScript | Estrutura da interface SPA com componentes funcionais              |
+| TailwindCSS, PostCSS  | Estilização utilitária e responsiva                                    |
+| Axios                 | Comunicação HTTP com a API                                              |
+| React Router DOM      | Roteamento de páginas                                                   |
+| Context API, Hooks    | Gerenciamento de estado local                                           |
+| Jest, React Testing Library | Testes unitários de componentes                                      |
+| Vite Plugin Tailwind, Lucide | Extensões visuais e ícones                                          |
+
+---
+
+## 2. Aplicação (Backend)
+
+| Tecnologia         | Função Principal                                                        |
+|--------------------|--------------------------------------------------------------------------|
+| FastAPI            | Framework principal da API RESTful                                      |
+| Pydantic           | Validação e modelagem de dados (schemas)                                |
+| Uvicorn            | Servidor ASGI para execução da API                                      |
+| Python 3.11+       | Linguagem base do backend                                                |
+| dotenv             | Variáveis de ambiente                                                    |
+| CORS Middleware, APIRouter | Configuração de segurança e rotas modulares                          |
+
+---
+
+## 3. Persistência (Banco de Dados)
+
+| Tecnologia         | Função Principal                                                        |
+|--------------------|--------------------------------------------------------------------------|
+| MongoDB Atlas      | Armazenamento de dados estruturados em coleções                         |
+| PyMongo            | Cliente MongoDB para Python                                              |
+| Qdrant Cloud/Server| Armazenamento vetorial para embeddings semânticos                        |
+| qdrant-client      | Cliente Python para Qdrant                                               |
+
+---
+
+## 4. Dados Semânticos / IA
+
+| Tecnologia                  | Função Principal                                                  |
+|-----------------------------|--------------------------------------------------------------------|
+| OpenAI Embeddings ou SentenceTransformers | Geração de embeddings semânticos (texto, imagem, equação)  |
+| LangChain (opcional)        | Orquestração e pipelines de IA generativa                         |
+| scikit-learn, numpy (opcional) | Cálculo de distâncias, análises vetoriais                         |
+
+---
+
+## 5. Documentação / Observabilidade
+
+| Tecnologia           | Função Principal                                                       |
+|----------------------|------------------------------------------------------------------------|
+| Swagger UI (FastAPI) | Interface de documentação interativa da API                           |
+| ReDoc                | Documentação OpenAPI alternativa                                       |
+| SwaggerDocsPage.tsx  | Integração da documentação com o frontend                             |
+| logging, logs_interacao | Registro interno de ações dos usuários                                |
+"""
 
 # 📘 Vibe Learning – Plataforma Educacional Multimodal com IA
 
@@ -114,124 +158,97 @@ O projeto **V-LABS** foi desenvolvido com um stack moderno e modular, voltado ao
 
 ## 🧱 Estrutura do Projeto
 
-```bash
-V-LABS/
+Vibe-Learning-Studio/
 │
-├── src/
-│   ├── components/              # Componentes UI organizados por domínio funcional
-│   │   ├── ai/                  # Painéis e retornos do módulo de IA
-│   │   ├── chat/                # ChatBar, mensagens, lista
-│   │   ├── collaboration/       # Painel de colaboração em tempo real
-│   │   ├── common/              # Componentes reutilizáveis (Avatar, Button, etc.)
-│   │   ├── layout/              # Header, Sidebar, Menu, Layout principal
-│   │   └── tutoring/            # Botões e ações de tutoria
-│   │
-│   ├── context/                 # Contextos globais da aplicação (Theme, Auth, Progress, etc.)
-│   ├── hooks/                   # Hooks personalizados
-│   ├── pages/                   # Páginas principais (rotas)
-│   ├── services/                # Acesso à API e funções de backend
-│   ├── setupTest/              # Configuração e arquivos de teste unitário com Jest
-│   ├── types/                  # Tipos TypeScript globais
-│   ├── App.tsx                 # Componente raiz da aplicação
-│   ├── main.tsx                # Ponto de entrada com ReactDOM
-│   └── index.css               # Estilos globais
+├── backend_bd/
+│   ├── backend/
+│   │   ├── run.py                        # Arquivo de execução principal da API
+│   │   ├── .env                          # Variáveis de ambiente
+│   │   ├── requirements.txt              # Dependências do backend
+│   │   ├── bd_mongodb_v1.py              # Script de teste MongoDB
+│   │   ├── bd_qdrant_v1.py               # Script de teste Qdrant
+│   │   ├── mongodr_qdrant_v1.py          # Integração MongoDB + Qdrant
+│   │   └── app/
+│   │       ├── main.py                   # Instância FastAPI
+│   │       ├── database/
+│   │       │   ├── mongo.py              # Conexão MongoDB
+│   │       │   └── qdrant.py             # Conexão Qdrant
+│   │       ├── models/                   # Modelos (opcional)
+│   │       ├── routers/
+│   │       │   ├── usuarios.py           # Rotas de usuários
+│   │       │   ├── perguntas.py          # Rotas de perguntas
+│   │       ├── schemas/
+│   │       │   └── main.py               # Schemas Pydantic
+│   │       └── __pycache__/              # Cache Python
 │
-├── public/
-│   └── index.html              # HTML base
+├── frontend/
+│   └── src/
+│       ├── components/
+│       │   ├── ai/
+│       │   │   └── AIFeedbackPanel.tsx
+│       │   ├── chat/
+│       │   ├── collaboration/
+│       │   ├── common/
+│       │   │   ├── Avatar.tsx
+│       │   │   └── Button.tsx
+│       │   ├── dashboard/
+│       │   ├── layout/
+│       │   │   ├── Layout.tsx
+│       │   │   ├── SideBar.tsx
+│       │   │   ├── TopBar.tsx
+│       │   │   ├── UnifiedLayout.tsx
+│       │   │   └── MobileMenu.tsx
+│       │   └── multimodal/
+│       │       ├── TextInput.tsx
+│       │       ├── VoiceInput.tsx
+│       │       ├── ImageInput.tsx
+│       │       ├── EquationInput.tsx
+│       │       └── QuestionInputPanel.tsx
+│       ├── config/
+│       │   └── layoutConfig.ts
+│       ├── context/
+│       │   ├── AppContext.tsx
+│       │   ├── AuthContext.tsx
+│       │   └── ChatContext.tsx
+│       ├── hooks/
+│       │   ├── useAIAnalysis.ts
+│       │   └── useAIFeedback.ts
+│       ├── pages/
+│       │   ├── Home.tsx
+│       │   ├── TextPage.tsx
+│       │   ├── VoicePage.tsx
+│       │   ├── ImagePage.tsx
+│       │   ├── EquationPage.tsx
+│       │   ├── UsuariosPage.tsx
+│       │   ├── DashBoard.tsx
+│       │   ├── StudentTablePage.tsx
+│       │   ├── CompetencyChartPage.tsx
+│       │   ├── HistoricoPage.tsx
+│       │   └── SwaggerDocsPage.tsx
+│       ├── progress/
+│       │   └── LearningPathGraph.tsx
+│       ├── tutoring/
+│       │   └── TutorButtons.tsx
+│       ├── services/
+│       │   ├── api.ts
+│       │   └── progress.ts
+│       ├── setupTest/
+│       │   ├── Button.test.tsx
+│       │   ├── jest.config.js
+│       │   └── setupTests.ts
+│       ├── types/
+│       │   ├── App.tsx
+│       │   ├── main.tsx
+│       │   └── index.ts
+│       ├── index.css
+│       ├── index.html
+│       └── Vibe_Learning_Studio_doc_1.pdf
 │
-├── tailwind.config.js         # Configuração TailwindCSS
-├── vite.config.js             # Configuração do Vite (build tool)
-├── postcss.config.cjs         # Configuração PostCSS
-├── jest.config.js             # Configuração Jest para testes
-├── package.json               # Dependências e scripts
-└── README.md                  # Documentação (este arquivo)
-
-
-| Tecnologia                 | Função Principal                                    |
-| -------------------------- | --------------------------------------------------- |
-| **React + TypeScript**     | Framework principal com tipagem estática            |
-| **Vite**                   | Bundler e dev server rápido                         |
-| **TailwindCSS**            | Estilização utilitária responsiva                   |
-| **Context API**            | Gerenciamento de estado local/global                |
-| **Jest + Testing Library** | Testes unitários dos componentes                    |
-| **Axios/Fetch**            | Comunicação com API (camada `services/`)            |
-| **IA Backend**             | Módulo de inferência via APIs externas (modelo LLM) |
-| **PostgreSQL** (esperado)  | Persistência dos dados de usuários e interações     |
-
-
-🧠 Funcionalidades Principais
-🟢 Tutoria Multimodal
-Tutoria via texto, voz, imagem e equações.
-
-Componente: TutorButtons.tsx
-
-🧠 Módulo de IA
-Comunicação com modelo inteligente para gerar feedback e respostas.
-
-Componente: AIFeedbackPanel.tsx
-
-💬 Chat Integrado
-Comunicação dinâmica entre usuário e IA com histórico.
-
-Componentes: ChatBar.tsx, MessageList.tsx
-
-🧩 Progresso e Avaliação
-Rastreamento de domínio e nível de domínio por contexto.
-
-Contexto: ProgressContext.tsx
-
-🧾 Autenticação
-Simulação de login, autenticação e roles de acesso.
-
-Contexto: AuthContext.tsx
-
-🛠️ Testes
-Testes unitários com Jest (Button.test.tsx)
-
-Configuração em jest.config.js e setupTests.ts
-
-🚀 Como Executar Localmente
-Pré-requisitos
-Node.js >= 18.x
-
-npm >= 9.x
-
-🔷 1. Node.js como Ambiente de Desenvolvimento
-No contexto do frontend em React, o Node.js serve como plataforma de suporte para:
-
-Função	Ferramentas associadas
-Gerenciamento de pacotes	npm, package.json, package-lock.json
-Transpilação e bundling (dev/build)	vite (executado via Node)
-Processamento de CSS	postcss, tailwind (Node executa a toolchain)
-Testes automatizados	jest (executado em ambiente Node)
-Rodar scripts utilitários	Comandos em scripts no package.json
-
-✅ Resumo: no frontend, o Node.js não executa o React, mas fornece o ambiente de ferramentas necessário para transpilar, empacotar, servir e testar sua aplicação.
-
-🔷 2. Node.js como Backend (Orquestração / Middleware)
-Na arquitetura exibida (com a camada de orquestração e a camada de segurança/middleware), o Node.js pode ser usado também como servidor backend, em um ou mais dos seguintes papéis:
-
-📌 a) API REST
-Criar e expor endpoints via frameworks como:
-
-Express.js
-
-NestJS
-
-Comunicação entre Interface ⇄ Orquestração ⇄ Módulo IA
-
-📌 b) Middleware de Segurança
-Verificação de tokens JWT
-
-Proteção de rotas
-
-Gestão de sessões
-
-Cross-Origin Resource Sharing (CORS)
-
-📌 c) Gateway para IA
-Receber requisição do frontend, encaminhar ao modelo (ex.: FastAPI, OpenAI, Hugging Face), e retornar resposta.
-
-📌 d) Camada de Integração com o Banco de Dados
-Intermediar acesso ao PostgreSQL, MongoDB etc. via ORMs como Prisma, Sequelize ou TypeORM.
+├── package.json
+├── package-lock.json
+├── vite.config.js
+├── tailwind.config.js
+├── postcss.config.cjs
+└── README.md
+```"""
 
