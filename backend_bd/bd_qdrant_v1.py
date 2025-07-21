@@ -7,9 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1PVhy8hK-TpREty_4mKE1SIZw3oHNkT7-
 """
 
-!pip install qdrant-client
-
-!pip install sentence-transformers
 
 from qdrant_client import QdrantClient
 
@@ -60,5 +57,3 @@ from sentence_transformers import SentenceTransformer
 modelo = SentenceTransformer('all-MiniLM-L6-v2')  # vetores de 384 dimensões
 vetor = modelo.encode("Qual a relação entre números e frações?").tolist()
 
-!git config --global user.email "mattediblu@gmail.com"
-!git config --global user.name "Mattedi"

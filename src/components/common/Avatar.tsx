@@ -6,6 +6,7 @@
 //Iniciais (caso a imagem não seja fornecida),
 //Sinalização se o usuário está online (isOnline),
 //Ícone de função específica (por exemplo, "T" para tutor).
+// src/components/common/Avatar.tsx
 
 import React, { useState } from 'react';
 
@@ -16,9 +17,9 @@ interface AvatarProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
   isOnline?: boolean;
-  role?: 'student' | 'tutor' | 'teacher';
+  role?: 'student' | 'tutor' | 'teacher' | 'admin';
+  onClick?: () => void; // Interação opcional
 }
-
 export const Avatar: React.FC<AvatarProps> = ({
   src,
   alt = '',
@@ -27,25 +28,35 @@ export const Avatar: React.FC<AvatarProps> = ({
   className = '',
   isOnline = false,
   role,
+  onClick,
 }) => {
   const [imageError, setImageError] = useState(false);
 
   const sizeClasses = {
-    xs: 'w-6 h-6',
-    sm: 'w-8 h-8',
-    md: 'w-10 h-10',
-    lg: 'w-12 h-12',
-    xl: 'w-16 h-16',
+    xs: 'w-6 h-6 text-xs',
+    sm: 'w-8 h-8 text-sm',
+    md: 'w-10 h-10 text-base',
+    lg: 'w-12 h-12 text-lg',
+    xl: 'w-16 h-16 text-xl',
   };
 
   const shouldShowInitials = !src || imageError;
 
   return (
-    <div className={`relative inline-block ${className}`}>
+    <div
+      className={`relative inline-block ${className} cursor-pointer rounded-full`}
+      onClick={onClick}
+      tabIndex={0}
+      role="button"
+      aria-label={`Avatar de ${alt}`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onClick?.();
+        }
+      }}
+    >
       {shouldShowInitials ? (
-        <div
-          className={`${sizeClasses[size]} rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold`}
-        >
+        <div className={`${sizeClasses[size]} rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold`}>
           {initials?.trim().toUpperCase() || '??'}
         </div>
       ) : (
@@ -69,6 +80,8 @@ export const Avatar: React.FC<AvatarProps> = ({
     </div>
   );
 };
+
+
 
 
 // Extensões: Aceitar status mais complexos (busy, away, etc.).
