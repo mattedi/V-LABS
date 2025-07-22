@@ -8,10 +8,14 @@
 
 // types/App.tsx
 // src/App.tsx
+// src/App.tsx
+// src/App.tsx
+// src/App.tsx
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import { AppProvider } from './context/AppContext';
+import { AuthProvider } from './context/AuthContext'; // ← ADICIONADO
 import { ChatProvider } from './context/ChatContext';
 import { ProgressProvider } from './context/ProgressContext';
 
@@ -29,148 +33,189 @@ import HistoricoPage from './pages/HistoricoPage';
 import CompetencyChartPage from './pages/CompetencyChartPage';
 import StudentTablePage from './pages/StudentTablePage';
 import LearningPathGraph from './components/progress/LearningPathGraph';
-import UsuariosPage from './pages/UsuariosPage'; // ✅ Certifique-se de que este arquivo exista
-
+import UsuariosPage from './pages/UsuariosPage';
 import SwaggerDocsPage from './pages/SwaggerDocsPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+
+// Componente para Rotas Protegidas
+import { useAuth } from './context/AuthContext';
+
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+};
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <AuthProvider> {/* ← AuthProvider envolvendo toda a aplicação */}
       <AppProvider>
         <ChatProvider>
           <ProgressProvider>
             <Routes>
 
-              {/* Home/Chat */}
+              {/* Página Principal - PÚBLICA (sem ProtectedRoute) */}
               <Route
                 path="/"
                 element={
-                  <UnifiedLayout
-                    pageTitle="VIBE LEARNING STUDIO"
-                    showChatBar={true}
-                    showTutorButtons={true}
-                  >
+                  <UnifiedLayout pageTitle="VIBE LEARNING STUDIO" showChatBar showTutorButtons>
                     <Home />
                   </UnifiedLayout>
                 }
               />
 
+              {/* Autenticação - Rotas Públicas */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/docs" element={<DocsPage />} />
+
+              {/* Chat - PROTEGIDA */}
               <Route
                 path="/chat"
                 element={
-                  <UnifiedLayout
-                    pageTitle="Chat IA"
-                    showChatBar={true}
-                    showTutorButtons={true}
-                  >
-                    <Home />
-                  </UnifiedLayout>
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Chat IA" showChatBar showTutorButtons>
+                      <Home />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
                 }
               />
 
-              {/* Tutorias */}
+              {/* Tutorias - Rotas Protegidas */}
               <Route
                 path="/text"
                 element={
-                  <UnifiedLayout pageTitle="Tutoria por Texto" showChatBar={true}>
-                    <TextPage />
-                  </UnifiedLayout>
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Tutoria por Texto" showChatBar>
+                      <TextPage />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/voice"
                 element={
-                  <UnifiedLayout pageTitle="Tutoria por Voz" showChatBar={true}>
-                    <VoicePage />
-                  </UnifiedLayout>
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Tutoria por Voz" showChatBar>
+                      <VoicePage />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/equation"
                 element={
-                  <UnifiedLayout pageTitle="Tutoria de Equações" showChatBar={true}>
-                    <EquationPage />
-                  </UnifiedLayout>
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Tutoria de Equações" showChatBar>
+                      <EquationPage />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/image"
                 element={
-                  <UnifiedLayout pageTitle="Tutoria por Imagem" showChatBar={true}>
-                    <ImagePage />
-                  </UnifiedLayout>
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Tutoria por Imagem" showChatBar>
+                      <ImagePage />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
                 }
               />
 
-              {/* Documentos */}
-              <Route path="/docs" element={<DocsPage />} />
-
-              {/* API - Usuários */}
+              {/* Extras - Algumas Públicas, Outras Protegidas */}
               <Route
                 path="/usuarios"
                 element={
-                  <UnifiedLayout pageTitle="Usuários" showChatBar={false} showTutorButtons={false}>
-                    <UsuariosPage />
-                  </UnifiedLayout>
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Usuários">
+                      <UsuariosPage />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
                 }
               />
-
-              {/* Ajustes */}
+              <Route
+                path="/perfil"
+                element={
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Meu Perfil">
+                      <div className="text-center py-8">
+                        <h2 className="text-2xl font-bold mb-4">Meu Perfil</h2>
+                        <p className="text-gray-600 dark:text-gray-400">Página de perfil em desenvolvimento...</p>
+                      </div>
+                    </UnifiedLayout>
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/ajustes"
                 element={
-                  <UnifiedLayout pageTitle="Ajustes" showChatBar={false} showTutorButtons={false}>
-                    <SettingsPanel />
-                  </UnifiedLayout>
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Ajustes">
+                      <SettingsPanel />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
                 }
               />
-
-              {/* Dashboard */}
               <Route
                 path="/dashboard"
                 element={
-                  <UnifiedLayout pageTitle="Painel de Desempenho" showChatBar={false} showTutorButtons={false}>
-                    <DashboardPage />
-                  </UnifiedLayout>
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Painel de Desempenho">
+                      <DashboardPage />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
                 }
               />
-
-              {/* Progresso */}
               <Route
                 path="/progresso"
                 element={
-                  <UnifiedLayout pageTitle="Trajetória de Aprendizagem" showChatBar={false} showTutorButtons={false}>
-                    <LearningPathGraph data={[
-                      { date: '2025-07-01', text: 3, voice: 1, image: 2, equation: 0 },
-                      { date: '2025-07-02', text: 5, voice: 0, image: 1, equation: 1 },
-                      { date: '2025-07-03', text: 2, voice: 3, image: 0, equation: 2 },
-                      { date: '2025-07-04', text: 4, voice: 1, image: 3, equation: 1 },
-                    ]} />
-                  </UnifiedLayout>
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Trajetória de Aprendizagem">
+                      <LearningPathGraph
+                        data={[
+                          { date: '2025-07-01', text: 3, voice: 1, image: 2, equation: 0 },
+                          { date: '2025-07-02', text: 5, voice: 0, image: 1, equation: 1 },
+                          { date: '2025-07-03', text: 2, voice: 3, image: 0, equation: 2 },
+                          { date: '2025-07-04', text: 4, voice: 1, image: 3, equation: 1 },
+                        ]}
+                      />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
                 }
               />
-<Route
-  path="/api-docs"
-  element={
-    <UnifiedLayout pageTitle="Documentação da API">
-      <SwaggerDocsPage />
-    </UnifiedLayout>
-  }
-/>
-              {/* Histórico com rotas aninhadas */}
+              <Route
+                path="/api-docs"
+                element={
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Documentação da API">
+                      <SwaggerDocsPage />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Histórico com rotas aninhadas - Protegidas */}
               <Route
                 path="/historico"
                 element={
-                  <UnifiedLayout
-                    pageTitle="Histórico de Desempenho"
-                    showChatBar={false}
-                    showTutorButtons={false}
-                  >
-                    <HistoricoPage />
-                  </UnifiedLayout>
+                  <ProtectedRoute>
+                    <UnifiedLayout pageTitle="Histórico de Desempenho">
+                      <HistoricoPage />
+                    </UnifiedLayout>
+                  </ProtectedRoute>
                 }
               >
                 <Route index element={<CompetencyChartPage />} />
@@ -178,15 +223,16 @@ export default function App() {
                 <Route path="estudantes" element={<StudentTablePage />} />
               </Route>
 
+              {/* Rota fallback */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+
             </Routes>
           </ProgressProvider>
         </ChatProvider>
       </AppProvider>
-    </BrowserRouter>
+    </AuthProvider>
   );
 }
-
-
 
 // EXTENSÕES FUTURAS:
 // - Sistema de breadcrumbs dinâmico

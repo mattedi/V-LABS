@@ -43,6 +43,12 @@ import {
 import { useThemeContext } from '../../context/ThemeContext';
 import { useAppContext } from '../../context/AppContext';
 
+// Tipagem adicionada para permitir uso externo de flags
+interface SideBarProps {
+  showChatBar?: boolean;
+  showTutorButtons?: boolean;
+}
+
 interface MenuItemProps {
   to: string;
   icon: React.ReactNode;
@@ -71,7 +77,10 @@ function MenuItem({ to, icon, label }: MenuItemProps): JSX.Element {
   );
 }
 
-export default function SideBar(): JSX.Element {
+export default function SideBar({
+  showChatBar = true,         // padrão: visível
+  showTutorButtons = false    // padrão: oculto
+}: SideBarProps): JSX.Element {
   const { isDarkMode } = useThemeContext();
   const { fontSize } = useAppContext();
   const [showHistorico, setShowHistorico] = useState(false);
@@ -89,7 +98,9 @@ export default function SideBar(): JSX.Element {
       </div>
 
       <nav className="flex flex-col gap-4 w-full">
-        <MenuItem to="/chat" icon={<FiMessageCircle size={20} />} label="Chat" />
+        {showChatBar && (
+          <MenuItem to="/chat" icon={<FiMessageCircle size={20} />} label="Chat" />
+        )}
         <MenuItem to="/ajustes" icon={<FiSliders size={20} />} label="Ajustes" />
 
         {/* Menu expandível - Histórico */}
@@ -119,10 +130,19 @@ export default function SideBar(): JSX.Element {
             />
           </div>
         )}
+
+        {/* Espaço reservado para botões adicionais, caso necessário */}
+        {showTutorButtons && (
+          <div className="mt-4 border-t pt-4 text-xs opacity-70">
+            {/* Aqui poderia haver uma renderização de botões tutor */}
+            <span className="block px-4">Botões do Tutor</span>
+          </div>
+        )}
       </nav>
     </aside>
   );
 }
+
 
 
 // EXTENSÕES:
