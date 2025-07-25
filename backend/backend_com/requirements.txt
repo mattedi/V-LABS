@@ -1,0 +1,42 @@
+# ============================================
+# DEPENDÊNCIAS DO V-LABS BACKEND_COM
+# ============================================
+
+# === FRAMEWORK WEB ===
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# === VALIDAÇÃO E SERIALIZAÇÃO ===
+pydantic==2.5.0
+pydantic-settings==2.1.0
+email-validator==2.1.0
+
+# === HTTP CLIENT ===
+httpx==0.25.2
+requests==2.31.0
+
+# === CORS ===
+python-multipart==0.0.6
+
+# === LOGS E MONITORAMENTO ===
+# Usando apenas biblioteca padrão do Python para logging básico
+# python-json-logger==2.0.7  # REMOVIDO - usando implementação customizada
+# structlog==23.2.0          # REMOVIDO - funcionalidade avançada desnecessária para MVP
+
+# === UTILITÁRIOS ===
+python-dotenv==1.0.0
+typing-extensions==4.8.0
+bcrypt==4.1.2
+psutil==5.9.6
+
+# === DESENVOLVIMENTO (OPCIONAL) ===
+# pytest==7.4.3
+# pytest-asyncio==0.21.1
+# black==23.11.0
+# flake8==6.1.0
+# mypy==1.7.1
+
+# ============================================
+# VERSÕES ESPECÍFICAS PARA ESTABILIDADE
+# Para atualizar: pip install --upgrade -r requirements.txt
+# ============================================
