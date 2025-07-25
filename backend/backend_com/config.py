@@ -1,5 +1,5 @@
 """
-Configurações centralizadas do backend_com.
+Configurações centralizadas do backend_com - VERSÃO CORRIGIDA
 
 Este módulo gerencia todas as configurações do sistema através de variáveis
 de ambiente, fornecendo valores padrão seguros para desenvolvimento.
@@ -7,7 +7,14 @@ de ambiente, fornecendo valores padrão seguros para desenvolvimento.
 
 import os
 from typing import Optional
-from pydantic import BaseSettings, Field
+from pydantic import Field
+
+# CORREÇÃO: Import correto para Pydantic v2
+try:
+    from pydantic_settings import BaseSettings
+except ImportError:
+    # Fallback para versões mais antigas
+    from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
