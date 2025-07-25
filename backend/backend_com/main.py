@@ -1,5 +1,5 @@
 """
-Aplicação principal do backend_com - VERSÃO CORRIGIDA
+Aplicação principal do backend_com - VERSÃO FINAL CORRETA
 
 Configura e inicializa o servidor FastAPI com todos os
 roteadores, middlewares e configurações necessárias.
@@ -22,11 +22,11 @@ sys.path.insert(0, current_dir)
 # Imports absolutos - SEM pontos
 import config
 import routers
-import utils
+from utils import setup_logger, configure_structured_logging
 
 # Configura logging estruturado
-utils.configure_structured_logging()
-logger = utils.setup_logger("main")
+configure_structured_logging()
+logger = setup_logger("main")
 
 # Tempo de inicialização para cálculo de uptime
 app_start_time = time.time()
@@ -58,7 +58,6 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down V-LABS Backend Communication service...")
 
 
-# Cria aplicação FastAPI
 def create_app() -> FastAPI:
     """
     Factory function para criar e configurar a aplicação FastAPI.
