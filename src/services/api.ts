@@ -31,7 +31,7 @@ interface AuthResponse {
 
 // Configuração da API local
 const API_CONFIG = {
-  BASE_URL: 'http://localhost:3001',
+  BASE_URL: 'http://localhost:8000',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
 };
@@ -233,39 +233,39 @@ export interface RegisterData extends LoginCredentials {
 class AuthService {
   public async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      // Simulação de login (substitua por chamada real)
-      await apiService.delay(1000);
+      const response = await apiService.post<any>('/auth/login', {
+        email: credentials.email,
+        senha: credentials.password,
+        lembrar_me: false
+      });
 
-      // Validação de credenciais mock
-      if (credentials.email === 'demo@vlabs.com' && credentials.password === '123456') {
-        const mockResponse: AuthResponse = {
-          token: 'mock-jwt-token-' + Date.now(),
-          user: {
-            id: 'user-123',
-            username: 'Demo User',
-            email: credentials.email,
-            role: 'student',
-            createdAt: new Date().toISOString(),
-          },
-          expiresIn: 3600
-        };
+      const authResponse: AuthResponse = {
+        token: response.access_token,
+        user: {
+          id: response.usuario.id,
+          username: response.usuario.nome,
+          email: response.usuario.email,
+          role: response.usuario.tipo_usuario as 'student' | 'teacher' | 'admin',
+          createdAt: response.usuario.created_at || new Date().toISOString(),
+        },
+        expiresIn: response.expires_in || 3600
+      };
 
-        this.storeAuthData(mockResponse);
-        return mockResponse;
-      } else {
-        throw new Error('Credenciais inválidas');
+      this.storeAuthData(authResponse);
+      
+      if (response.refresh_token) {
+        localStorage.setItem('vlabs_refresh_token', response.refresh_token);
       }
-    } catch (error) {
+      
+      return authResponse;
+    } catch (error: any) {
       console.error('Erro no login:', error);
-      throw error;
+      throw new Error(error.response?.data?.message || error.message || 'Credenciais inválidas');
     }
   }
 
   public async register(userData: RegisterData): Promise<AuthResponse> {
     try {
-      // Simulação de registro
-      await apiService.delay(1000);
-
       if (userData.password !== userData.confirmPassword) {
         throw new Error('Senhas não coincidem');
       }
@@ -274,31 +274,41 @@ class AuthService {
         throw new Error('Senha deve ter pelo menos 6 caracteres');
       }
 
-      const mockResponse: AuthResponse = {
-        token: 'mock-jwt-token-' + Date.now(),
+      const response = await apiService.post<any>('/auth/register', {
+        nome: userData.username,
+        email: userData.email,
+        senha: userData.password,
+        tipo_usuario: 'student'
+      });
+
+      const authResponse: AuthResponse = {
+        token: response.access_token,
         user: {
-          id: 'user-' + Date.now(),
-          username: userData.username,
-          email: userData.email,
-          role: 'student',
-          createdAt: new Date().toISOString(),
+          id: response.usuario.id,
+          username: response.usuario.nome,
+          email: response.usuario.email,
+          role: response.usuario.tipo_usuario as 'student' | 'teacher' | 'admin',
+          createdAt: response.usuario.created_at || new Date().toISOString(),
         },
-        expiresIn: 3600
+        expiresIn: response.expires_in || 3600
       };
 
-      this.storeAuthData(mockResponse);
-      return mockResponse;
-    } catch (error) {
+      this.storeAuthData(authResponse);
+      
+      if (response.refresh_token) {
+        localStorage.setItem('vlabs_refresh_token', response.refresh_token);
+      }
+      
+      return authResponse;
+    } catch (error: any) {
       console.error('Erro no registro:', error);
-      throw error;
+      throw new Error(error.response?.data?.message || error.message || 'Erro no registro');
     }
   }
 
   public async logout(): Promise<void> {
     try {
-      // Em uma implementação real, chamaria a API
-      // await apiService.post(API_ENDPOINTS.AUTH.LOGOUT);
-      await apiService.delay(500);
+      await apiService.post('/auth/logout');
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
     } finally {

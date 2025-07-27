@@ -100,16 +100,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async ({ email, password }: LoginCredentials): Promise<void> => {
     setIsLoading(true);
     try {
-      if (email === 'demo@vlabs.com' && password === '123456') {
-        const user = await simulateAuthResponse({ email });
-        const token = 'mock-jwt-token-' + Date.now();
-        storeAuthData(user, token);
-      } else {
-        throw new Error('Credenciais inválidas');
+      const response = await fetch('http://localhost:8000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          senha: password,
+          lembrar_me: false
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Credenciais inválidas');
       }
-    } catch (err) {
+
+      const data = await response.json();
+      
+      const user: User = {
+        id: data.usuario.id,
+        username: data.usuario.nome,
+        email: data.usuario.email,
+        role: data.usuario.tipo_usuario as 'student' | 'teacher' | 'admin',
+        createdAt: data.usuario.created_at || new Date().toISOString(),
+      };
+      
+      storeAuthData(user, data.access_token);
+      
+      if (data.refresh_token) {
+        localStorage.setItem('vlabs_refresh_token', data.refresh_token);
+      }
+    } catch (err: any) {
       console.error('[Auth] Erro no login:', err);
-      throw err;
+      throw new Error(err.message || 'Credenciais inválidas');
     } finally {
       setIsLoading(false);
     }
@@ -130,12 +155,42 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error('Senha deve ter pelo menos 6 caracteres');
       }
 
-      const user = await simulateAuthResponse({ username, email });
-      const token = 'mock-jwt-token-' + Date.now();
-      storeAuthData(user, token);
-    } catch (err) {
+      const response = await fetch('http://localhost:8000/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nome: username,
+          email: email,
+          senha: password,
+          tipo_usuario: 'student'
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro no registro');
+      }
+
+      const data = await response.json();
+      
+      const user: User = {
+        id: data.usuario.id,
+        username: data.usuario.nome,
+        email: data.usuario.email,
+        role: data.usuario.tipo_usuario as 'student' | 'teacher' | 'admin',
+        createdAt: data.usuario.created_at || new Date().toISOString(),
+      };
+      
+      storeAuthData(user, data.access_token);
+      
+      if (data.refresh_token) {
+        localStorage.setItem('vlabs_refresh_token', data.refresh_token);
+      }
+    } catch (err: any) {
       console.error('[Auth] Erro no registro:', err);
-      throw err;
+      throw new Error(err.message || 'Erro no registro');
     } finally {
       setIsLoading(false);
     }
@@ -144,9 +199,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async (): Promise<void> => {
     setIsLoading(true);
     try {
-      await new Promise((res) => setTimeout(res, 300));
+      const token = localStorage.getItem('vlabs_token');
+      if (token) {
+        await fetch('http://localhost:8000/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }
       clearAuthData();
-    } catch (err) {
+    } catch (err: any) {
       console.error('[Auth] Erro no logout:', err);
     } finally {
       setIsLoading(false);

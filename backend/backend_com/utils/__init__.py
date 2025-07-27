@@ -64,6 +64,14 @@ from .security import (
     check_rate_limit,
 )
 
+from .jwt_utils import (
+    # Utilitários JWT
+    create_access_token,
+    create_refresh_token,
+    verify_token,
+    hash_sensitive_data,
+)
+
 # Importa funções de logging diretamente
 from .logging import (
     # Utilitários de logging
@@ -118,6 +126,11 @@ __all__ = [
     "sanitize_html_input",
     "validate_file_security",
     "check_rate_limit",
+    
+    "create_access_token",
+    "create_refresh_token",
+    "verify_token",
+    "hash_sensitive_data",
     
     # Logging
     "setup_logger",

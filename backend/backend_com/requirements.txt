@@ -41,4 +41,4 @@ httpx==0.25.2
 # ============================================
 # VERSÕES ESPECÍFICAS PARA ESTABILIDADE
 # Para atualizar: pip install --upgrade -r requirements.txt
-# ============================================
+# ============================================python-jose[cryptography]==3.3.0

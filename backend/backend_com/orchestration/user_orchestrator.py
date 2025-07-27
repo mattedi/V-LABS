@@ -489,27 +489,31 @@ class UserOrchestrator(Coordinator):
         return {"account_active": True}
     
     async def _generate_auth_tokens(self, user_id: str, remember_me: bool) -> Dict[str, Any]:
-        """Gera tokens de autenticação."""
-        # Em implementação real, usaria JWT ou similar
-        access_token = generate_uuid()
-        refresh_token = generate_uuid() if remember_me else None
+        """Gera tokens de autenticação JWT."""
+        from ..utils.jwt_utils import create_access_token, create_refresh_token, hash_sensitive_data
         
-        # Define expiração baseada em remember_me
+        token_data = {"sub": user_id, "user_id": user_id}
+        
+        access_token = create_access_token(token_data)
+        refresh_token = create_refresh_token(token_data) if remember_me else None
+        
         access_expires = datetime.utcnow() + timedelta(hours=24 if remember_me else 2)
         refresh_expires = datetime.utcnow() + timedelta(days=30) if remember_me else None
         
-        # Armazena tokens no banco para validação
-        token_data = {
+        token_record = {
             "user_id": user_id,
-            "access_token": access_token,
-            "refresh_token": refresh_token,
+            "access_token_hash": hash_sensitive_data(access_token),
+            "refresh_token_hash": hash_sensitive_data(refresh_token) if refresh_token else None,
             "access_expires_at": access_expires.isoformat(),
             "refresh_expires_at": refresh_expires.isoformat() if refresh_expires else None,
             "created_at": datetime.utcnow().isoformat(),
             "active": True
         }
         
-        await self.persistence_gateway.mongodb.create_document("auth_tokens", token_data)
+        try:
+            await self.persistence_gateway.mongodb.create_document("auth_tokens", token_record)
+        except Exception as e:
+            self.logger.warning(f"Failed to store token record: {str(e)}")
         
         return {
             "access_token": access_token,

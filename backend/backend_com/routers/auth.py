@@ -17,8 +17,10 @@ from ..models import (
     ErrorResponse,
     SuccessResponse
 )
-from ..orchestration import UserOrchestrator
-from ..utils.logging import setup_logger, RequestLogger
+from ..orchestration.user_orchestrator import UserOrchestrator
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from ..utils.jwt_utils import verify_token
+from ..utils.logging import setup_logger
 
 # Configuração do router
 router = APIRouter(
@@ -66,17 +68,13 @@ async def register_user(user_data: UsuarioRequest):
     Raises:
         HTTPException: Se dados inválidos ou email já existe
     """
-    async with RequestLogger("register_user") as req_logger:
-        try:
+    try:
             # Inicializa orquestrador
             user_orchestrator = UserOrchestrator()
             
             # Converte para dict e remove senha do log
             user_dict = user_data.model_dump()
-            req_logger.add_context(
-                email=user_dict.get("email"),
-                tipo_usuario=user_dict.get("tipo_usuario")
-            )
+            logger.info(f"Processing registration for email: {user_dict.get('email')}")
             
             # Executa fluxo de registro
             result = await user_orchestrator.register_user_flow(
@@ -96,7 +94,12 @@ async def register_user(user_data: UsuarioRequest):
                 )
             
             # Busca dados completos do usuário criado
-            user_id = result.data["user_id"]
+            user_id = result.data.get("user_id") if result.data else None
+            if not user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to get user ID from result"
+                )
             persistence_gateway = user_orchestrator.persistence_gateway
             
             user_response = await persistence_gateway.get_user(user_id)
@@ -116,7 +119,7 @@ async def register_user(user_data: UsuarioRequest):
                 extra={
                     "user_id": user_id,
                     "email": user_dict.get("email"),
-                    "verification_sent": result.data.get("email_verification_sent", False)
+                    "verification_sent": result.data.get("email_verification_sent", False) if result.data else False
                 }
             )
             
@@ -160,14 +163,10 @@ async def login_user(login_data: LoginRequest):
     Raises:
         HTTPException: Se credenciais inválidas ou conta inativa
     """
-    async with RequestLogger("login_user") as req_logger:
-        try:
+    try:
             user_orchestrator = UserOrchestrator()
             
-            req_logger.add_context(
-                email=login_data.email,
-                remember_me=login_data.lembrar_me
-            )
+            logger.info(f"Processing login for email: {login_data.email}")
             
             # Executa fluxo de autenticação
             result = await user_orchestrator.authenticate_user_flow(
@@ -187,7 +186,12 @@ async def login_user(login_data: LoginRequest):
                 )
             
             # Busca dados completos do usuário
-            user_id = result.data["user_id"]
+            user_id = result.data.get("user_id") if result.data else None
+            if not user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Failed to get user ID from result"
+                )
             persistence_gateway = user_orchestrator.persistence_gateway
             
             user_response = await persistence_gateway.get_user(user_id)
@@ -204,10 +208,10 @@ async def login_user(login_data: LoginRequest):
             
             # Monta resposta de login
             login_response = LoginResponse(
-                access_token=result.data["access_token"],
+                access_token=result.data.get("access_token") if result.data else "",
                 token_type="bearer",
                 expires_in=3600,  # Em implementação real, seria calculado
-                refresh_token=result.data.get("refresh_token"),
+                refresh_token=result.data.get("refresh_token") if result.data else None,
                 usuario=UsuarioResponse(**user_data_response)
             )
             
@@ -216,7 +220,7 @@ async def login_user(login_data: LoginRequest):
                 extra={
                     "user_id": user_id,
                     "email": login_data.email,
-                    "session_created": result.data.get("session_created", False)
+                    "session_created": result.data.get("session_created", False) if result.data else False
                 }
             )
             
@@ -257,8 +261,7 @@ async def logout_user(
     Raises:
         HTTPException: Se token inválido
     """
-    async with RequestLogger("logout_user") as req_logger:
-        try:
+    try:
             access_token = credentials.credentials
             
             # Busca usuário pelo token (implementação simplificada)
@@ -268,10 +271,7 @@ async def logout_user(
             # Por simplicidade, assumindo que token é válido
             user_id = "user_id_from_token"  # Placeholder
             
-            req_logger.add_context(
-                user_id=user_id,
-                logout_all=logout_all
-            )
+            logger.info(f"Processing logout for user: {user_id}")
             
             # Executa fluxo de logout
             result = await user_orchestrator.logout_user_flow(
@@ -330,8 +330,7 @@ async def refresh_token(refresh_token: str):
     Raises:
         HTTPException: Se refresh token inválido ou expirado
     """
-    async with RequestLogger("refresh_token"):
-        try:
+    try:
             # Em implementação real, validaria refresh token
             # e geraria novo access token
             
@@ -379,12 +378,22 @@ async def change_password(
     Raises:
         HTTPException: Se senha atual incorreta ou nova senha inválida
     """
-    async with RequestLogger("change_password") as req_logger:
-        try:
+    try:
             access_token = credentials.credentials
             
-            # Em implementação real, extrairia user_id do token
-            user_id = "user_id_from_token"  # Placeholder
+            payload = verify_token(access_token, "access")
+            if not payload:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Token inválido ou expirado"
+                )
+            
+            user_id = payload.get("user_id")
+            if not user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Token inválido"
+                )  # Placeholder
             
             req_logger.add_context(user_id=user_id)
             
@@ -482,39 +491,15 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 # Dependency para validar token e obter usuário atual
 async def get_current_user_dependency(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    current_user_data: Dict[str, Any] = Depends(get_current_user)
 ) -> Dict[str, Any]:
     """
     Dependency para validar token e obter usuário atual.
     
     Args:
-        credentials: Token de autorização
+        current_user_data: Dados do usuário autenticado
         
     Returns:
         dict: Dados do usuário autenticado
-        
-    Raises:
-        HTTPException: Se token inválido
     """
-    try:
-        access_token = credentials.credentials
-        
-        # Em implementação real, validaria token JWT
-        # e extrairia dados do usuário
-        
-        # Placeholder - implementação simplificada
-        user_data = {
-            "id": "user_id_from_token",
-            "email": "user@example.com",
-            "nome": "Usuário Exemplo",
-            "tipo_usuario": "student"
-        }
-        
-        return user_data
-        
-    except Exception as e:
-        logger.error(f"Token validation failed: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials"
-        )
+    return current_user_data
