@@ -15,8 +15,8 @@ const UsuariosPage: React.FC = () => {
     <div className="p-6 bg-white dark:bg-gray-800 rounded shadow">
       <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Lista de Usuários</h2>
       <ul className="list-disc pl-6 text-gray-800 dark:text-gray-100">
-        {usuarios.map((usuario, index) => (
-          <li key={index}>{usuario}</li>
+        {usuarios.map((usuario) => (
+          <li key={usuario}>{usuario}</li>
         ))}
       </ul>
     </div>
