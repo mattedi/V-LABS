@@ -61,6 +61,23 @@ class Settings(BaseSettings):
         description="Formato do log"
     )
     
+    jwt_secret_key: str = Field(
+        default="dev-secret-key-change-in-production",
+        description="Chave secreta para JWT"
+    )
+    jwt_algorithm: str = Field(
+        default="HS256",
+        description="Algoritmo JWT"
+    )
+    jwt_access_token_expire_minutes: int = Field(
+        default=60,
+        description="Expiração do access token em minutos"
+    )
+    jwt_refresh_token_expire_days: int = Field(
+        default=30,
+        description="Expiração do refresh token em dias"
+    )
+    
     # === RATE LIMITING (FUTURO) ===
     rate_limit_requests: int = Field(default=100, description="Limite de requisições por minuto")
     rate_limit_window: int = Field(default=60, description="Janela de tempo em segundos")
