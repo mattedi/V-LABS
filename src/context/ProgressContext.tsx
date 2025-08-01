@@ -6,7 +6,7 @@
 // Ele permite que qualquer componente envolvido pelo `ProgressProvider` acesse e manipule o progresso do usuário,
 // além de gerar recomendações baseadas no progresso atual.
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 // Hook useLocalStorage simplificado (definido localmente)
 function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
@@ -20,7 +20,7 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<Re
     }
   });
 
-  const setValue: React.Dispatch<React.SetStateAction<T>> = (value) => {
+  const setValue: React.Dispatch<React.SetStateAction<T>> = useCallback((value) => {
     try {
       const valueToStore = value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
@@ -28,7 +28,7 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<Re
     } catch (error) {
       console.error(`Erro ao salvar no localStorage para a chave "${key}":`, error);
     }
-  };
+  }, [key, storedValue]);
 
   return [storedValue, setValue];
 }
@@ -78,14 +78,32 @@ const defaultProgress: UserProgress = {
   text: { completed: 0, totalAttempts: 0, masteryLevel: 'iniciante' }
 };
 
+// MEMOIZAÇÃO: Constantes extraídas para evitar recriações
+const MODES: (keyof UserProgress)[] = ['equation', 'voice', 'image', 'text'];
+
+const MODE_NAMES = {
+  equation: 'Equações',
+  voice: 'Reconhecimento de Voz',
+  image: 'Análise de Imagens',
+  text: 'Compreensão de Texto'
+} as const;
+
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const [userProgress, setUserProgress] = useLocalStorage<UserProgress>('user-progress', defaultProgress);
-  const [recommendedContent, setRecommendedContent] = useState<RecommendedContent[]>([]);
 
-  // CORREÇÃO: Função updateProgress com tipagem mais segura
-  const updateProgress = (mode: keyof UserProgress, result: ProgressUpdateResult) => {
+  // MEMOIZAÇÃO: Função calculateMasteryLevel pura e memoizada
+  const calculateMasteryLevel = useCallback((completed: number, attempts: number): 'iniciante' | 'intermediário' | 'avançado' => {
+    if (attempts === 0) return 'iniciante';
+
+    const ratio = completed / attempts;
+    if (ratio >= 0.8) return 'avançado';
+    if (ratio >= 0.6) return 'intermediário';
+    return 'iniciante';
+  }, []);
+
+  // MEMOIZAÇÃO: updateProgress com useCallback para estabilidade de referência
+  const updateProgress = useCallback((mode: keyof UserProgress, result: ProgressUpdateResult) => {
     setUserProgress((prev: UserProgress) => {
-      // CORREÇÃO: Garantir que o modo existe e criar uma cópia segura
       const currentProgress = prev[mode];
       if (!currentProgress) {
         console.warn(`Modo "${mode}" não encontrado no progresso`);
@@ -95,7 +113,6 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       const newCompleted = result.success ? currentProgress.completed + 1 : currentProgress.completed;
       const newTotalAttempts = currentProgress.totalAttempts + 1;
 
-      // CORREÇÃO: Criar objeto atualizado de forma mais segura
       const updatedProgress: UserProgress = {
         ...prev,
         [mode]: {
@@ -107,25 +124,13 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
       return updatedProgress;
     });
-  };
+  }, [setUserProgress, calculateMasteryLevel]);
 
-  // CORREÇÃO: Função com retorno tipado corretamente
-  const calculateMasteryLevel = (completed: number, attempts: number): 'iniciante' | 'intermediário' | 'avançado' => {
-    if (attempts === 0) return 'iniciante';
-
-    const ratio = completed / attempts;
-    if (ratio >= 0.8) return 'avançado';
-    if (ratio >= 0.6) return 'intermediário';
-    return 'iniciante';
-  };
-
-  const generateRecommendations = (): RecommendedContent[] => {
+  // MEMOIZAÇÃO: generateRecommendations memoizada por userProgress
+  const recommendedContent = useMemo((): RecommendedContent[] => {
     if (!userProgress) return [];
 
-    // CORREÇÃO: Usar Object.entries com tipagem correta
-    const modes: (keyof UserProgress)[] = ['equation', 'voice', 'image', 'text'];
-    
-    const sortedAreas = modes
+    const sortedAreas = MODES
       .map((mode) => ({
         mode,
         data: userProgress[mode],
@@ -139,56 +144,46 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
     if (!weakestArea) return [];
 
-    const modeNames = {
-      equation: 'Equações',
-      voice: 'Reconhecimento de Voz',
-      image: 'Análise de Imagens',
-      text: 'Compreensão de Texto'
-    };
-
     return [
       {
         id: 1,
         mode: weakestArea.mode,
-        title: `Melhorar em ${modeNames[weakestArea.mode]}`,
+        title: `Melhorar em ${MODE_NAMES[weakestArea.mode]}`,
         difficulty: weakestArea.data.masteryLevel
       },
       {
         id: 2,
         mode: weakestArea.mode,
-        title: `Exercícios de ${modeNames[weakestArea.mode]}`,
+        title: `Exercícios de ${MODE_NAMES[weakestArea.mode]}`,  
         difficulty: weakestArea.data.masteryLevel === 'iniciante' ? 'fácil' : 'médio'
       }
     ];
-  };
-
-  const getOverallProgress = (): number => {
-    const modes: (keyof UserProgress)[] = ['equation', 'voice', 'image', 'text'];
-    
-    const totalCompleted = modes.reduce((sum, mode) => sum + userProgress[mode].completed, 0);
-    const totalAttempts = modes.reduce((sum, mode) => sum + userProgress[mode].totalAttempts, 0);
-    
-    return totalAttempts > 0 ? Math.round((totalCompleted / totalAttempts) * 100) : 0;
-  };
-
-  const resetProgress = (): void => {
-    setUserProgress(defaultProgress);
-  };
-
-  useEffect(() => {
-    setRecommendedContent(generateRecommendations());
   }, [userProgress]);
 
-  const value: ProgressContextType = {
+  // MEMOIZAÇÃO: getOverallProgress memoizada por userProgress
+  const getOverallProgress = useCallback((): number => {
+    const totalCompleted = MODES.reduce((sum, mode) => sum + userProgress[mode].completed, 0);
+    const totalAttempts = MODES.reduce((sum, mode) => sum + userProgress[mode].totalAttempts, 0);
+    
+    return totalAttempts > 0 ? Math.round((totalCompleted / totalAttempts) * 100) : 0;
+  }, [userProgress]);
+
+  // MEMOIZAÇÃO: resetProgress com useCallback
+  const resetProgress = useCallback((): void => {
+    setUserProgress(defaultProgress);
+  }, [setUserProgress]);
+
+  // MEMOIZAÇÃO: Valor do contexto memoizado para evitar re-renders desnecessários
+  const contextValue = useMemo((): ProgressContextType => ({
     userProgress,
     updateProgress,
     recommendedContent,
     getOverallProgress,
     resetProgress
-  };
+  }), [userProgress, updateProgress, recommendedContent, getOverallProgress, resetProgress]);
 
   return (
-    <ProgressContext.Provider value={value}>
+    <ProgressContext.Provider value={contextValue}>
       {children}
     </ProgressContext.Provider>
   );
@@ -202,44 +197,57 @@ export const useProgressContext = (): ProgressContextType => {
   return context;
 };
 
-// Hook adicional para usar progresso de um modo específico
+// MEMOIZAÇÃO: Hook useProgress otimizado com useMemo
 export const useProgress = (mode: keyof UserProgress) => {
   const { userProgress, updateProgress } = useProgressContext();
   
-  return {
-    progress: userProgress[mode],
-    updateProgress: (result: ProgressUpdateResult) => updateProgress(mode, result),
-    completionRate: userProgress[mode].totalAttempts > 0 
-      ? Math.round((userProgress[mode].completed / userProgress[mode].totalAttempts) * 100)
-      : 0
-  };
+  // MEMOIZAÇÃO: Objeto de retorno memoizado por mode e userProgress[mode]
+  return useMemo(() => {
+    const modeProgress = userProgress[mode];
+    const completionRate = modeProgress.totalAttempts > 0 
+      ? Math.round((modeProgress.completed / modeProgress.totalAttempts) * 100)
+      : 0;
+
+    return {
+      progress: modeProgress,
+      updateProgress: (result: ProgressUpdateResult) => updateProgress(mode, result),
+      completionRate
+    };
+  }, [mode, userProgress, updateProgress]);
 };
 
-// Componente para exibir progresso
-export const ProgressDisplay: React.FC<{ mode: keyof UserProgress }> = ({ mode }) => {
+// MEMOIZAÇÃO: ProgressDisplay com React.memo para evitar re-renders desnecessários
+export const ProgressDisplay: React.FC<{ mode: keyof UserProgress }> = React.memo(({ mode }) => {
   const { progress, completionRate } = useProgress(mode);
   
-  const modeNames = {
-    equation: 'Equações',
-    voice: 'Voz',
-    image: 'Imagem',
-    text: 'Texto'
-  };
+  // MEMOIZAÇÃO: Objetos de configuração memoizados
+  const modeDisplayName = useMemo(() => {
+    const names = {
+      equation: 'Equações',
+      voice: 'Voz', 
+      image: 'Imagem',
+      text: 'Texto'
+    };
+    return names[mode];
+  }, [mode]);
 
-  const levelColors = {
-    iniciante: 'text-red-600',
-    intermediário: 'text-yellow-600',
-    avançado: 'text-green-600'
-  };
+  const levelColorClass = useMemo(() => {
+    const colors = {
+      iniciante: 'text-red-600',
+      intermediário: 'text-yellow-600',
+      avançado: 'text-green-600'
+    };
+    return colors[progress.masteryLevel];
+  }, [progress.masteryLevel]);
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
-      <h3 className="font-semibold text-gray-800 mb-2">{modeNames[mode]}</h3>
+      <h3 className="font-semibold text-gray-800 mb-2">{modeDisplayName}</h3>
       
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
           <span>Nível:</span>
-          <span className={`font-medium ${levelColors[progress.masteryLevel]}`}>
+          <span className={`font-medium ${levelColorClass}`}>
             {progress.masteryLevel}
           </span>
         </div>
@@ -263,7 +271,7 @@ export const ProgressDisplay: React.FC<{ mode: keyof UserProgress }> = ({ mode }
       </div>
     </div>
   );
-};
+});
 
 // EXTENSÕES:
 // - Adicionar animações de transição ao atualizar o progresso.

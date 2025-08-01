@@ -1,4 +1,3 @@
-// src/components/multimodal/TextInput.tsx
 import React, { useState } from 'react';
 
 interface TextInputProps {
@@ -12,14 +11,17 @@ const TextInput: React.FC<TextInputProps> = ({ onSubmit }) => {
     const trimmed = input.trim();
     if (!trimmed) return;
 
-    onSubmit?.(trimmed); // chama o callback se fornecido
+    onSubmit?.(trimmed);
     setInput('');
   };
 
   return (
     <div>
       <input
-        className="w-full border rounded px-3 py-2"
+        className="w-full border rounded px-3 py-2 
+                   bg-white text-black 
+                   dark:bg-gray-900 dark:text-white
+                   focus:outline-none focus:ring-2 focus:ring-blue-500"
         placeholder="Digite sua pergunta..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
@@ -35,4 +37,5 @@ const TextInput: React.FC<TextInputProps> = ({ onSubmit }) => {
 };
 
 export default TextInput;
+
 

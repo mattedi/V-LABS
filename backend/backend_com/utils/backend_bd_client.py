@@ -1,54 +1,120 @@
-# utils/backend_bd_client.py
 """
 Cliente para comunicação com o backend_bd.
+
+Este módulo fornece uma interface limpa para comunicação
+com o serviço de persistência do V-LABS.
 """
 
 import httpx
-import asyncio
-from typing import Dict, Any, Optional
+import time
+from typing import Dict, Any, Optional, List
 from config import get_settings
 
 
 class BackendBDClient:
-    """Cliente para comunicação com backend_bd."""
+    """
+    Cliente assíncrono para comunicação com backend_bd.
+    
+    Fornece métodos para todas as operações de integração
+    com o serviço de persistência.
+    """
     
     def __init__(self):
+        """Inicializa cliente com configurações do sistema."""
         self.settings = get_settings()
         self.base_url = self.settings.backend_bd_url
         self.timeout = self.settings.backend_bd_timeout
         
     async def health_check(self) -> Dict[str, Any]:
-        """Verifica saúde do backend_bd."""
+        """
+        Verifica saúde do backend_bd.
+        
+        Returns:
+            dict: Status de saúde e informações do serviço
+        """
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
+                start_time = time.time()
                 response = await client.get(f"{self.base_url}/health")
+                response_time = (time.time() - start_time) * 1000
+                
                 response.raise_for_status()
-                return response.json()
+                
+                return {
+                    "status": "healthy",
+                    "response_time_ms": round(response_time, 2),
+                    "data": response.json(),
+                    "url": f"{self.base_url}/health"
+                }
+                
+        except httpx.TimeoutException:
+            return {
+                "status": "timeout",
+                "message": f"Backend_BD timeout após {self.timeout}s",
+                "url": f"{self.base_url}/health"
+            }
+        except httpx.HTTPStatusError as e:
+            return {
+                "status": "http_error",
+                "status_code": e.response.status_code,
+                "message": f"Backend_BD retornou {e.response.status_code}",
+                "url": f"{self.base_url}/health"
+            }
         except Exception as e:
             return {
                 "status": "error",
-                "message": f"Backend_BD não disponível: {str(e)}"
+                "message": f"Erro de conexão: {str(e)}",
+                "url": f"{self.base_url}/health"
             }
     
-    async def get_questions(self, limit: int = 10) -> Dict[str, Any]:
-        """Busca perguntas no backend_bd."""
+    async def get_questions(self, limit: int = 10, offset: int = 0) -> Dict[str, Any]:
+        """
+        Busca perguntas no backend_bd.
+        
+        Args:
+            limit: Número máximo de perguntas
+            offset: Deslocamento para paginação
+            
+        Returns:
+            dict: Lista de perguntas ou erro
+        """
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.get(
                     f"{self.base_url}/questions",
-                    params={"limit": limit}
+                    params={"limit": limit, "offset": offset}
                 )
                 response.raise_for_status()
-                return response.json()
+                
+                data = response.json()
+                return {
+                    "success": True,
+                    "questions": data.get("questions", []),
+                    "total": data.get("total", 0),
+                    "limit": limit,
+                    "offset": offset,
+                    "source": "backend_bd"
+                }
+                
         except Exception as e:
             return {
+                "success": False,
                 "error": True,
                 "message": f"Erro ao buscar perguntas: {str(e)}",
-                "questions": []
+                "questions": [],
+                "total": 0
             }
     
     async def create_question(self, question_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Cria uma pergunta no backend_bd."""
+        """
+        Cria uma pergunta no backend_bd.
+        
+        Args:
+            question_data: Dados da pergunta
+            
+        Returns:
+            dict: Pergunta criada ou erro
+        """
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 response = await client.post(
@@ -56,91 +122,112 @@ class BackendBDClient:
                     json=question_data
                 )
                 response.raise_for_status()
-                return response.json()
+                
+                return {
+                    "success": True,
+                    "question": response.json(),
+                    "message": "Pergunta criada com sucesso"
+                }
+                
         except Exception as e:
             return {
+                "success": False,
                 "error": True,
                 "message": f"Erro ao criar pergunta: {str(e)}"
             }
-
-
-# Instância global do cliente
-backend_bd_client = BackendBDClient()
-
-
-# routers/__init__.py - Atualização para usar backend_bd real
-"""
-Exemplo de como atualizar os roteadores para usar backend_bd real.
-"""
-
-from fastapi import APIRouter, HTTPException
-from utils.backend_bd_client import backend_bd_client
-
-# Atualização do educational_router
-educational_router = APIRouter(prefix="/educational", tags=["Educational"])
-
-@educational_router.get("/questions", summary="Listar Perguntas Reais")
-async def get_questions_real():
-    """Busca perguntas reais do backend_bd."""
     
-    # Chama o backend_bd
-    result = await backend_bd_client.get_questions()
-    
-    if result.get("error"):
-        raise HTTPException(
-            status_code=503,
-            detail=f"Serviço indisponível: {result.get('message')}"
-        )
-    
-    return {
-        "questions": result.get("questions", []),
-        "total": len(result.get("questions", [])),
-        "source": "backend_bd",
-        "status": "success"
-    }
-
-@educational_router.get("/health-integration", summary="Teste de Integração")
-async def test_integration():
-    """Testa integração com backend_bd."""
-    
-    # Verifica conectividade
-    health = await backend_bd_client.health_check()
-    
-    return {
-        "backend_com_status": "ok",
-        "backend_bd_status": health.get("status", "unknown"),
-        "integration": "working" if health.get("status") == "ok" else "failed",
-        "backend_bd_response": health
-    }
-
-
-# main.py - Endpoint para testar integração completa
-@app.get("/system/status", summary="Status do Sistema Completo")
-async def system_status():
-    """Status de todo o sistema V-LABS."""
-    
-    # Testa backend_bd
-    bd_health = await backend_bd_client.health_check()
-    
-    return {
-        "system": "V-LABS",
-        "components": {
-            "backend_com": {
-                "status": "ok",
-                "url": "http://127.0.0.1:8000",
-                "uptime_seconds": round(time.time() - app_start_time, 2)
-            },
-            "backend_bd": {
-                "status": bd_health.get("status", "unknown"),
-                "url": "http://127.0.0.1:8001",
-                "response": bd_health
-            },
-            "frontend": {
-                "status": "unknown",
-                "note": "Status não verificado"
+    async def get_users(self, limit: int = 10) -> Dict[str, Any]:
+        """
+        Busca usuários no backend_bd.
+        
+        Args:
+            limit: Número máximo de usuários
+            
+        Returns:
+            dict: Lista de usuários ou erro
+        """
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.get(
+                    f"{self.base_url}/users",
+                    params={"limit": limit}
+                )
+                response.raise_for_status()
+                
+                data = response.json()
+                return {
+                    "success": True,
+                    "users": data.get("users", []),
+                    "total": data.get("total", 0),
+                    "source": "backend_bd"
+                }
+                
+        except Exception as e:
+            return {
+                "success": False,
+                "error": True,
+                "message": f"Erro ao buscar usuários: {str(e)}",
+                "users": [],
+                "total": 0
             }
-        },
-        "integration_test": {
-            "backend_com_to_bd": "working" if bd_health.get("status") == "ok" else "failed"
-        }
-    }
+    
+    async def authenticate_user(self, email: str, password: str) -> Dict[str, Any]:
+        """
+        Autentica usuário no backend_bd.
+        
+        Args:
+            email: Email do usuário
+            password: Senha do usuário
+            
+        Returns:
+            dict: Dados do usuário autenticado ou erro
+        """
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.post(
+                    f"{self.base_url}/auth/login",
+                    json={"email": email, "password": password}
+                )
+                response.raise_for_status()
+                
+                return {
+                    "success": True,
+                    "user": response.json(),
+                    "message": "Usuário autenticado com sucesso"
+                }
+                
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 401:
+                return {
+                    "success": False,
+                    "error": True,
+                    "message": "Credenciais inválidas"
+                }
+            else:
+                return {
+                    "success": False,
+                    "error": True,
+                    "message": f"Erro de autenticação: {e.response.status_code}"
+                }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": True,
+                "message": f"Erro ao autenticar: {str(e)}"
+            }
+
+
+# Instância global do cliente (singleton)
+_backend_bd_client = None
+
+def get_backend_bd_client() -> BackendBDClient:
+    """
+    Retorna instância singleton do cliente backend_bd.
+    
+    Returns:
+        BackendBDClient: Instância do cliente
+    """
+    global _backend_bd_client
+    if _backend_bd_client is None:
+        _backend_bd_client = BackendBDClient()
+    return _backend_bd_client

@@ -1,0 +1,9 @@
+{
+  "python.analysis.extraPaths": [
+    "./backend",
+    "./backend/backend_com",
+    "./backend_bd/backend_mq/app",
+    "./backend_bd"
+  ]
+}
+

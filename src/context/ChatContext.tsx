@@ -5,96 +5,81 @@
 // de uma conversa em uma aplicação React. Ele permite que qualquer componente
 // envolvido pelo `ChatProvider` acesse e manipule as mensagens do chat.
 
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 /**
  * Estrutura de uma mensagem do chat
- * Define como cada mensagem é organizada
  */
-interface ChatMessage {
-  id: string;                        // ID único (para o React identificar)
-  text: string;                      // Conteúdo da mensagem
-  sender: 'user' | 'assistant';      // Quem enviou (usuário ou IA)
-  timestamp: Date;                   // Quando foi enviada
+export interface ChatMessage {
+  id: string;
+  text: string;
+  sender: 'user' | 'assistant';
+  timestamp: Date;
 }
 
 /**
- * Define o que o contexto de chat disponibiliza
- * Funcionalidades que qualquer componente pode usar
+ * Tipo do contexto do Chat
  */
 interface ChatContextType {
-  messages: ChatMessage[];                                    // Lista de todas as mensagens
-  addMessage: (text: string, sender: 'user' | 'assistant') => void;  // Adicionar nova mensagem
-  clearChat: () => void;                                      // Limpar conversa
+  messages: ChatMessage[];
+  addMessage: (text: string, sender: 'user' | 'assistant') => void;
+  clearChat: () => void;
+
+  // ✅ Novo: histórico de perguntas do usuário
+  userHistory: ChatMessage[];
 }
 
 /**
- * Cria o contexto (ainda vazio)
- * Será preenchido pelo Provider
+ * Criação do contexto
  */
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 /**
- * Provider - componente que gerencia o estado das mensagens
- * Deve envolver os componentes que precisam do chat
+ * Provider do Chat
  */
 export function ChatProvider({ children }: { children: ReactNode }) {
-  // Estado que guarda todas as mensagens da conversa
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  /**
-   * Função para adicionar uma nova mensagem ao chat
-   * Usada quando usuário envia ou IA responde
-   */
   const addMessage = (text: string, sender: 'user' | 'assistant') => {
     const newMessage: ChatMessage = {
-      id: Date.now().toString(),    // ID baseado no timestamp (simples e único)
-      text,                         // Texto da mensagem
-      sender,                       // Quem enviou
-      timestamp: new Date(),        // Hora atual
+      id: Date.now().toString(),
+      text,
+      sender,
+      timestamp: new Date(),
     };
-    
-    // Adiciona a nova mensagem no final da lista
     setMessages(prevMessages => [...prevMessages, newMessage]);
   };
 
-  /**
-   * Função para limpar todas as mensagens
-   * Útil para "Nova Conversa" ou reset
-   */
   const clearChat = () => {
-    setMessages([]); // Volta para array vazio
+    setMessages([]);
   };
+
+  // ✅ Histórico: apenas mensagens do usuário
+  const userHistory = messages.filter(msg => msg.sender === 'user');
 
   return (
     <ChatContext.Provider
       value={{
-        messages,    // Lista atual de mensagens
-        addMessage,  // Função para adicionar
-        clearChat,   // Função para limpar
+        messages,
+        addMessage,
+        clearChat,
+        userHistory, // <- novo dado disponível no contexto
       }}
     >
       {children}
-      {/* Todos os componentes filhos podem usar o chat */}
     </ChatContext.Provider>
   );
 }
 
 /**
- * Hook personalizado para usar o contexto do chat
- * Facilita o uso e adiciona verificação de erro
+ * Hook para acessar o contexto
  */
 export function useChatContext() {
   const context = useContext(ChatContext);
-  
-  // Verifica se está sendo usado dentro do ChatProvider
   if (context === undefined) {
     throw new Error('useChatContext must be used within a ChatProvider');
-    // Erro claro se esquecer de envolver com ChatProvider
   }
-  
-  return context; // Retorna as funções e dados do chat
+  return context;
 }
 
 // EXTENSÕES:

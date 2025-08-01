@@ -11,74 +11,67 @@
  * @returns {JSX.Element} Componente da página inicial
  */
 
-// Importações do React e roteamento
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// Importações dos componentes de chat
+// Componentes de chat
 import { ChatBar } from '../components/chat';
 import MessageList from '../components/chat/MessageList';
 
-// Importações dos componentes de tutoria
+// Componentes de tutoria
 import { TutorButtons } from '../components/tutoring';
 
-// Importação do contexto global da aplicação
+// Contextos
 import { useAppContext } from '../context/AppContext';
-// Importação do contexto de progresso
 import { useProgressContext } from '../context/ProgressContext';
+import { useAiFeedback } from '../hooks/useAiFeedback';
+import { AiFeedbackPanel } from '../components/ai/AiFeedbackPanel';
 
-/**
- * Componente principal da página inicial
- * 
- * Gerencia a navegação automática entre diferentes modos de tutoria
- * e renderiza a interface principal com chat e opções de tutoria.
- */
-export default function Home() {
-  // Hook para navegação programática entre páginas
+export default function Home(): JSX.Element {
   const navigate = useNavigate();
-  
-  // Obtém o modo atual selecionado pelo usuário do contexto global
   const { currentMode } = useAppContext();
-  
-  // Obtém as recomendações do contexto de progresso
   const { recommendedContent } = useProgressContext();
-  
-  /**
-   * Efeito para navegação automática baseada no modo selecionado
-   * 
-   * Monitora mudanças no currentMode e redireciona automaticamente
-   * para a página correspondente quando um modo específico é selecionado.
-   * 
-   * Modos disponíveis:
-   * - 'equation': Redireciona para /equation
-   * - 'voice': Redireciona para /voice  
-   * - 'image': Redireciona para /image
-   */
-  React.useEffect(() => {
-    if (currentMode === 'equation') {
-      navigate('/equation');
-    } else if (currentMode === 'voice') {
-      navigate('/voice');
-    } else if (currentMode === 'image') {
-      navigate('/image');
-    }
-  }, [currentMode, navigate]); // Dependências: executa quando currentMode ou navigate mudarem
 
-  // Renderizar recomendações
+  // Estado e lógica de envio de mensagens
+  const [lastQuestion, setLastQuestion] = useState('');
+  const [lastContentId, setLastContentId] = useState('');
+  const { feedback, isLoading, requestAnalysis } = useAiFeedback();
+
+  const handleSend = async (message: string) => {
+    const trimmed = message.trim();
+    if (!trimmed) return;
+
+    const contentId = `home-${Date.now()}`;
+    setLastQuestion(trimmed);
+    setLastContentId(contentId);
+    await requestAnalysis(contentId, trimmed, 'text');
+  };
+
+  // Redirecionamento automático conforme o modo selecionado
+  useEffect(() => {
+    if (currentMode === 'equation') navigate('/equation');
+    else if (currentMode === 'voice') navigate('/voice');
+    else if (currentMode === 'image') navigate('/image');
+  }, [currentMode, navigate]);
+
+  // Renderização das recomendações
   const renderRecommendations = () => {
     if (recommendedContent.length === 0) return null;
-    
+
     return (
       <div className="mt-8 p-4 bg-gray-400 rounded-lg">
         <h3 className="text-xl font-semibold text-[#B0D2FF]">Recomendado para você</h3>
         <ul className="mt-2">
           {recommendedContent.map(item => (
-            <li 
+            <li
               key={item.id}
               className="py-2 cursor-pointer hover:bg-gray-700 px-3 rounded-md"
               onClick={() => navigate(`/${item.mode}`)}
             >
-              {item.title} <span className="text-xs bg-blue-500 px-2 py-1 rounded-full ml-2">{item.difficulty}</span>
+              {item.title}
+              <span className="text-xs bg-blue-500 px-2 py-1 rounded-full ml-2">
+                {item.difficulty}
+              </span>
             </li>
           ))}
         </ul>
@@ -88,24 +81,38 @@ export default function Home() {
 
   return (
     <>
-      {/* Título principal da aplicação - destaque em azul claro */}
+      {/* Título principal */}
       <h2 className="mt-9 text-center text-4xl font-bold text-[#B0D2FF]">
         Bem vindo Vibe Learning Studio
       </h2>
 
-      {/* Área de chat - lista de mensagens e barra de entrada */}
+      {/* Lista de mensagens simuladas */}
       <MessageList />
-      <ChatBar />
 
-      {/* Seção de seleção de tutoria */}
+      {/* Barra de entrada com envio funcional */}
+      <ChatBar
+        onSend={handleSend}
+        placeholder="Ex. Como eu faço para calcular uma fração..."
+      />
+
+      {/* Feedback gerado (opcional) */}
+      {feedback && (
+        <div className="mt-6 max-w-4xl mx-auto">
+          <AiFeedbackPanel
+            analysisResult={feedback}
+            isLoading={isLoading}
+            onRetry={() => requestAnalysis(lastContentId, lastQuestion, 'text')}
+          />
+        </div>
+      )}
+
+      {/* Botões de seleção de tutoria */}
       <h3 className="mt-9 text-center text-3xl">
-       <span className="text-[#B0D2FF]"> Escolha sua tutoria</span>
+        <span className="text-[#B0D2FF]">Escolha sua tutoria</span>
       </h3>
-
-      {/* Botões para seleção dos diferentes tipos de tutoria */}
       <TutorButtons />
 
-      {/* Adicionar recomendações personalizadas */}
+      {/* Recomendações personalizadas */}
       {renderRecommendations()}
     </>
   );

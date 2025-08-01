@@ -1,47 +1,88 @@
 import os
-from qdrant_client import QdrantClient
-from qdrant_client.http.models import PointStruct
-from qdrant_client.http.exceptions import UnexpectedResponse
-from dotenv import load_dotenv
 import logging
+from dotenv import load_dotenv
+from qdrant_client import QdrantClient
+from qdrant_client.http.exceptions import UnexpectedResponse
+from qdrant_client.http.models import PointStruct, VectorParams, Distance
 
-logger = logging.getLogger(__name__)
+# =============================================================================
+# Configuração
+# =============================================================================
+
 load_dotenv()
 
-# Validar variáveis obrigatórias
+# Logging
+logger = logging.getLogger("qdrant")
+logging.basicConfig(level=logging.INFO)
+
+# Variáveis de ambiente
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
+QDRANT_COLLECTION = "interacoes"
+VECTOR_SIZE = 384  # compatível com all-MiniLM-L6-v2, etc.
 
 if not QDRANT_URL or not QDRANT_API_KEY:
-    raise ValueError("QDRANT_URL e QDRANT_API_KEY são obrigatórias")
+    raise ValueError("QDRANT_URL e QDRANT_API_KEY são obrigatórias.")
+
+# =============================================================================
+# Inicialização do cliente
+# =============================================================================
 
 try:
     qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
-    logger.info("Cliente Qdrant inicializado com sucesso")
+    logger.info("Cliente Qdrant inicializado com sucesso.")
 except Exception as e:
     logger.error(f"Erro ao conectar com Qdrant: {e}")
     raise
 
-def indexar_documento(collection_name: str, doc_id: str, vetor: list[float], payload: dict):
-    """Função unificada para indexar documentos no Qdrant"""
+# =============================================================================
+# Garantir que a coleção exista
+# =============================================================================
+
+try:
+    colecoes = qdrant.get_collections().collections
+    nomes_colecoes = [c.name for c in colecoes]
+
+    if QDRANT_COLLECTION not in nomes_colecoes:
+        qdrant.recreate_collection(
+            collection_name=QDRANT_COLLECTION,
+            vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE)
+        )
+        logger.info(f"Coleção '{QDRANT_COLLECTION}' criada.")
+    else:
+        logger.info(f"Coleção '{QDRANT_COLLECTION}' já existe.")
+except Exception as e:
+    logger.error(f"Erro ao verificar/criar coleção '{QDRANT_COLLECTION}': {e}")
+    raise
+
+# =============================================================================
+# Funções de indexação e busca
+# =============================================================================
+
+def indexar_documento(doc_id: str, vetor: list[float], payload: dict):
+    """
+    Indexa um documento (ponto) na coleção Qdrant.
+    """
     try:
         qdrant.upsert(
-            collection_name=collection_name,
-            points=[PointStruct(id=str(doc_id), vector=vetor, payload=payload)]
+            collection_name=QDRANT_COLLECTION,
+            points=[PointStruct(id=doc_id, vector=vetor, payload=payload)]
         )
-        logger.info(f"Documento {doc_id} indexado na coleção {collection_name}")
+        logger.info(f"Documento {doc_id} indexado na coleção {QDRANT_COLLECTION}.")
     except UnexpectedResponse as e:
-        logger.error(f"Erro ao indexar documento {doc_id}: {e}")
+        logger.error(f"Erro na resposta do Qdrant: {e}")
         raise
     except Exception as e:
-        logger.error(f"Erro inesperado ao indexar: {e}")
+        logger.error(f"Erro inesperado ao indexar documento {doc_id}: {e}")
         raise
 
-def buscar_por_texto(collection_name: str, vetor: list[float], limit: int = 5):
-    """Busca por similaridade usando vetor já processado"""
+def buscar_por_texto(vetor: list[float], limit: int = 5):
+    """
+    Realiza busca por similaridade com base em vetor.
+    """
     try:
         resultados = qdrant.search(
-            collection_name=collection_name,
+            collection_name=QDRANT_COLLECTION,
             query_vector=vetor,
             limit=limit,
             with_payload=True
