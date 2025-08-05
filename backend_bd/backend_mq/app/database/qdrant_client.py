@@ -19,15 +19,12 @@ logging.basicConfig(level=logging.INFO)
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 QDRANT_COLLECTION = "interacoes"
-VECTOR_SIZE = 384  # compatível com all-MiniLM-L6-v2, etc.
+VECTOR_SIZE = 384  # compatível com all-MiniLM-L6-v2
 
 if not QDRANT_URL or not QDRANT_API_KEY:
     raise ValueError("QDRANT_URL e QDRANT_API_KEY são obrigatórias.")
 
-# =============================================================================
 # Inicialização do cliente
-# =============================================================================
-
 try:
     qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
     logger.info("Cliente Qdrant inicializado com sucesso.")
@@ -36,24 +33,29 @@ except Exception as e:
     raise
 
 # =============================================================================
-# Garantir que a coleção exista
+# Verificação da coleção (executar sob demanda no main)
 # =============================================================================
 
-try:
-    colecoes = qdrant.get_collections().collections
-    nomes_colecoes = [c.name for c in colecoes]
+def garantir_colecao():
+    """
+    Garante que a coleção 'interacoes' esteja criada no Qdrant.
+    Deve ser chamada no início da aplicação (ex: em main.py).
+    """
+    try:
+        colecoes = qdrant.get_collections().collections
+        nomes_colecoes = [c.name for c in colecoes]
 
-    if QDRANT_COLLECTION not in nomes_colecoes:
-        qdrant.recreate_collection(
-            collection_name=QDRANT_COLLECTION,
-            vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE)
-        )
-        logger.info(f"Coleção '{QDRANT_COLLECTION}' criada.")
-    else:
-        logger.info(f"Coleção '{QDRANT_COLLECTION}' já existe.")
-except Exception as e:
-    logger.error(f"Erro ao verificar/criar coleção '{QDRANT_COLLECTION}': {e}")
-    raise
+        if QDRANT_COLLECTION not in nomes_colecoes:
+            qdrant.recreate_collection(
+                collection_name=QDRANT_COLLECTION,
+                vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE)
+            )
+            logger.info(f"Coleção '{QDRANT_COLLECTION}' criada.")
+        else:
+            logger.info(f"Coleção '{QDRANT_COLLECTION}' já existe.")
+    except Exception as e:
+        logger.error(f"Erro ao verificar/criar coleção '{QDRANT_COLLECTION}': {e}")
+        raise
 
 # =============================================================================
 # Funções de indexação e busca

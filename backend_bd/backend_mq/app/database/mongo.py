@@ -1,83 +1,60 @@
-import os
-import logging
-from typing import List, Dict
+# app/database/mongo.py
+
 from pymongo import MongoClient
 from pymongo.collection import Collection
-from pymongo.errors import ConnectionFailure
-from dotenv import load_dotenv
+from pymongo.database import Database
+from bson.objectid import ObjectId
+from typing import Dict, List
+import os
+import logging
 
-# =============================================================================
-# Configuração e Inicialização
-# =============================================================================
+# Logger
+logger = logging.getLogger(__name__)
 
-load_dotenv()
-
-# Configurar logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("mongo")
-
-# Variáveis de ambiente obrigatórias
-MONGODB_URI = os.getenv("MONGODB_URI")
-MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "vibe_learning")
-
-if not MONGODB_URI:
-    raise ValueError("Variável de ambiente 'MONGODB_URI' não foi definida.")
-
+# Conexão MongoDB
 try:
-    client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
-    client.admin.command("ping")  # Testar conexão
-    db = client[MONGODB_DATABASE]
-    logger.info("Conexão com MongoDB estabelecida com sucesso.")
-except ConnectionFailure as e:
-    logger.error(f"Falha na conexão com o MongoDB: {e}")
-    raise
+    MONGODB_URI = os.getenv("MONGODB_URI")
+    MONGODB_DATABASE = os.getenv("MONGODB_DATABASE")
+    if not MONGODB_URI or not MONGODB_DATABASE:
+        raise ValueError("Variáveis de ambiente MONGODB_URI ou MONGODB_DATABASE não definidas.")
+
+    client = MongoClient(MONGODB_URI)
+    db: Database = client[MONGODB_DATABASE]
+    collection_interacoes: Collection = db["interacoes"]
+
 except Exception as e:
-    logger.error(f"Erro inesperado ao conectar com MongoDB: {e}")
-    raise
+    logger.error(f"Erro ao conectar ao MongoDB: {e}")
+    raise RuntimeError("Falha na configuração do MongoDB")
 
-# =============================================================================
-# Coleções
-# =============================================================================
+# -----------------------------------------------------------------------------
+# Função para salvar uma interação no MongoDB
+# -----------------------------------------------------------------------------
 
-colecao_usuarios: Collection = db["usuarios"]
-colecao_perguntas: Collection = db["perguntas"]
-colecao_respostas: Collection = db["respostas"]
-colecao_avaliacoes: Collection = db["avaliacoes"]
-colecao_logs: Collection = db["logs"]
-colecao_interacoes: Collection = db["interacoes"]
-
-# =============================================================================
-# Funções utilitárias
-# =============================================================================
-
-def salvar_interacao(interacao: Dict) -> str:
+def salvar_interacao(interacao_dict: Dict) -> str:
     """
-    Insere uma nova interação na coleção `interacoes`.
-    
-    :param interacao: Dicionário representando a interação.
-    :return: ID da interação inserida como string.
+    Persiste a interação no MongoDB e retorna o ID do documento.
     """
     try:
-        result = colecao_interacoes.insert_one(interacao)
-        logger.info(f"Interação salva com ID {result.inserted_id}")
-        return str(result.inserted_id)
+        resultado = collection_interacoes.insert_one(interacao_dict)
+        return str(resultado.inserted_id)
     except Exception as e:
-        logger.error(f"Erro ao salvar interação: {e}")
-        raise
+        logger.error(f"Erro ao salvar interação no MongoDB: {e}")
+        raise RuntimeError("Erro ao salvar interação no banco de dados")
+
+# -----------------------------------------------------------------------------
+# Função para recuperar o histórico de um usuário
+# -----------------------------------------------------------------------------
 
 def buscar_historico_por_usuario(user_id: str) -> List[Dict]:
     """
-    Retorna todas as interações de um usuário específico.
-    
-    :param user_id: ID do usuário
-    :return: Lista de dicionários com as interações
+    Recupera todas as interações de um usuário, ordenadas por timestamp.
     """
     try:
-        interacoes = list(colecao_interacoes.find({"user_id": user_id}))
-        for item in interacoes:
-            item["_id"] = str(item["_id"])
-        logger.info(f"{len(interacoes)} interações encontradas para user_id={user_id}")
-        return interacoes
+        documentos = list(
+            collection_interacoes.find({"user_id": user_id}).sort("timestamp", 1)
+        )
+        return documentos
     except Exception as e:
-        logger.error(f"Erro ao buscar interações do usuário {user_id}: {e}")
-        raise
+        logger.error(f"Erro ao buscar histórico para user_id={user_id}: {e}")
+        raise RuntimeError("Erro ao buscar histórico no banco de dados")
+
