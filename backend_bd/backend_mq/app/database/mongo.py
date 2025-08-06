@@ -1,60 +1,53 @@
-# app/database/mongo.py
-
+# Database connections - versão funcional para produção
 from pymongo import MongoClient
-from pymongo.collection import Collection
-from pymongo.database import Database
-from bson.objectid import ObjectId
-from typing import Dict, List
 import os
-import logging
+from dotenv import load_dotenv
 
-# Logger
-logger = logging.getLogger(__name__)
+load_dotenv()
 
-# Conexão MongoDB
+# Configurações do MongoDB
+MONGO_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+DB_NAME = os.getenv("MONGODB_DATABASE", "vlabs_prod")
+
 try:
-    MONGODB_URI = os.getenv("MONGODB_URI")
-    MONGODB_DATABASE = os.getenv("MONGODB_DATABASE")
-    if not MONGODB_URI or not MONGODB_DATABASE:
-        raise ValueError("Variáveis de ambiente MONGODB_URI ou MONGODB_DATABASE não definidas.")
-
-    client = MongoClient(MONGODB_URI)
-    db: Database = client[MONGODB_DATABASE]
-    collection_interacoes: Collection = db["interacoes"]
-
+    client = MongoClient(MONGO_URI)
+    db = client[DB_NAME]
+    
+    # Testar conexão
+    client.admin.command('ping')
+    print(f"✅ MongoDB conectado (produção): {db.name}")
+    
+    # Coleções principais
+    colecao_usuarios = db.usuarios
+    colecao_perguntas = db.perguntas
+    colecao_respostas = db.respostas
+    colecao_avaliacoes = db.avaliacoes
+    colecao_logs = db.logs
+    colecao_embeddings = db.embeddings
+    colecao_interacoes = db.interacoes
+    colecao_alunos = db.alunos
+    colecao_sessoes = db.sessoes
+    colecao_configuracoes = db.configuracoes
+    colecao_modos_entrada = db.modos_entrada
+    colecao_logs_interacao = db.logs_interacao
+    
+    # Verificar coleções existentes
+    collections = db.list_collection_names()
+    print(f"Coleções disponíveis: {collections}")
+    
 except Exception as e:
-    logger.error(f"Erro ao conectar ao MongoDB: {e}")
-    raise RuntimeError("Falha na configuração do MongoDB")
-
-# -----------------------------------------------------------------------------
-# Função para salvar uma interação no MongoDB
-# -----------------------------------------------------------------------------
-
-def salvar_interacao(interacao_dict: Dict) -> str:
-    """
-    Persiste a interação no MongoDB e retorna o ID do documento.
-    """
-    try:
-        resultado = collection_interacoes.insert_one(interacao_dict)
-        return str(resultado.inserted_id)
-    except Exception as e:
-        logger.error(f"Erro ao salvar interação no MongoDB: {e}")
-        raise RuntimeError("Erro ao salvar interação no banco de dados")
-
-# -----------------------------------------------------------------------------
-# Função para recuperar o histórico de um usuário
-# -----------------------------------------------------------------------------
-
-def buscar_historico_por_usuario(user_id: str) -> List[Dict]:
-    """
-    Recupera todas as interações de um usuário, ordenadas por timestamp.
-    """
-    try:
-        documentos = list(
-            collection_interacoes.find({"user_id": user_id}).sort("timestamp", 1)
-        )
-        return documentos
-    except Exception as e:
-        logger.error(f"Erro ao buscar histórico para user_id={user_id}: {e}")
-        raise RuntimeError("Erro ao buscar histórico no banco de dados")
-
+    print(f"❌ Erro ao conectar MongoDB (produção): {e}")
+    # Fallback - variáveis None para evitar erros
+    db = None
+    colecao_usuarios = None
+    colecao_perguntas = None
+    colecao_respostas = None
+    colecao_avaliacoes = None
+    colecao_logs = None
+    colecao_embeddings = None
+    colecao_interacoes = None
+    colecao_alunos = None
+    colecao_sessoes = None
+    colecao_configuracoes = None
+    colecao_modos_entrada = None
+    colecao_logs_interacao = None

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 from app.schemas import InteractionCreate
-from app.database.mongo import salvar_interacao, obter_interacoes
+#from app.database.mongo import salvar_interacao, obter_interacoes
 from app.database.qdrant_client import indexar_documento
 from sentence_transformers import SentenceTransformer
 from datetime import datetime

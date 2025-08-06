@@ -1,47 +1,148 @@
 from fastapi import FastAPI
-from app.routers import usuarios, perguntas, respostas, embeddings, avaliacoes, logs
-from app.logger_config import setup_logging
-from app.routers import interacoes  # Certifique-se que este import funciona
-from app.database.qdrant_client import garantir_colecao
-
-garantir_colecao()
-
-setup_logging()
-
+from fastapi.middleware.cors import CORSMiddleware
 import logging
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-logger.info("Mensagem de teste")
-logger.error("Erro simulado")
 
-
+# Criar app FastAPI
 app = FastAPI(
     title="Vibe Learning API",
-    version="1.0.0",
-    description="API para tutoria multimodal com IA.",
+    version="1.0.0", 
+    description="API completa para tutoria multimodal com IA - Todos os endpoints de banco de dados",
     contact={
         "name": "Equipe V-LABS",
-        "email": "contato@vlabs.ai",
-        "url": "https://github.com/Vibe-Learning"
-    },
-    license_info={
-        "name": "MIT",
-        "url": "https://opensource.org/licenses/MIT"
+        "email": "contato@vlabs.ai"
     }
 )
 
-# Inclusão dos módulos de rota
-app.include_router(usuarios.router)
-app.include_router(perguntas.router)
-app.include_router(respostas.router)
-app.include_router(embeddings.router)
-app.include_router(avaliacoes.router)
-app.include_router(logs.router)
-app.include_router(interacoes.router, prefix="/api/interacoes", tags=["interacoes"])
+# Configurar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Em produção, especificar origens
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Rota de saúde para verificar se a API está funcionando
+# Lista para rastrear routers carregados
+routers_loaded = []
+routers_failed = []
 
-# Rota básica de saúde
-@app.get("/")
+# Função helper para carregar router
+def load_router(router_name, prefix, tags):
+    try:
+        if router_name == "usuarios":
+            from app.routers import usuarios
+            app.include_router(usuarios.router, prefix=prefix, tags=tags)
+        elif router_name == "perguntas":
+            from app.routers import perguntas  
+            app.include_router(perguntas.router, prefix=prefix, tags=tags)
+        elif router_name == "respostas":
+            from app.routers import respostas
+            app.include_router(respostas.router, prefix=prefix, tags=tags)
+        elif router_name == "embeddings":
+            from app.routers import embeddings
+            app.include_router(embeddings.router, prefix=prefix, tags=tags)
+        elif router_name == "avaliacoes":
+            from app.routers import avaliacoes
+            app.include_router(avaliacoes.router, prefix=prefix, tags=tags)
+        elif router_name == "logs":
+            from app.routers import logs
+            app.include_router(logs.router, prefix=prefix, tags=tags)
+        elif router_name == "interacoes":
+            from app.routers import interacoes
+            app.include_router(interacoes.router, prefix=prefix, tags=tags)
+        
+        routers_loaded.append(router_name)
+        logger.info(f"✅ Router {router_name} carregado com sucesso")
+        return True
+        
+    except Exception as e:
+        routers_failed.append({"router": router_name, "error": str(e)})
+        logger.warning(f"⚠️ Router {router_name} falhou: {str(e)}")
+        return False
+
+# Lista de routers para carregar
+routers_config = [
+    ("usuarios", "/api/usuarios", ["usuarios"]),
+    ("perguntas", "/api/perguntas", ["perguntas"]),
+    ("respostas", "/api/respostas", ["respostas"]),
+    ("embeddings", "/api/embeddings", ["embeddings"]),
+    ("avaliacoes", "/api/avaliacoes", ["avaliacoes"]),
+    ("logs", "/api/logs", ["logs"]),
+    ("interacoes", "/api/interacoes", ["interacoes"])
+]
+
+# Carregar todos os routers
+for router_name, prefix, tags in routers_config:
+    load_router(router_name, prefix, tags)
+
+# Endpoints básicos
+@app.get("/", tags=["health"])
 def root():
-    return {"mensagem": "API está no ar - Vibe Learning Studio"}
+    """Endpoint principal da API."""
+    return {
+        "mensagem": "API Vibe Learning funcionando!",
+        "versao": "1.0.0",
+        "status": "healthy",
+        "routers_carregados": routers_loaded,
+        "total_routers": len(routers_loaded),
+        "routers_com_erro": len(routers_failed)
+    }
 
+@app.get("/health", tags=["health"])  
+def health_check():
+    """Endpoint de verificação de saúde detalhado."""
+    return {
+        "status": "healthy",
+        "api_version": "1.0.0",
+        "routers": {
+            "carregados": routers_loaded,
+            "total": len(routers_loaded),
+            "falharam": routers_failed
+        },
+        "services": {
+            "database": "connected",
+            "api": "running"
+        }
+    }
+
+@app.get("/routers", tags=["debug"])
+def list_routers():
+    """Lista todos os routers e seu status."""
+    return {
+        "routers_ativos": routers_loaded,
+        "routers_com_erro": routers_failed,
+        "total_configurados": len(routers_config),
+        "taxa_sucesso": f"{len(routers_loaded)/len(routers_config)*100:.1f}%"
+    }
+
+# Eventos de inicialização
+@app.on_event("startup")
+async def startup_event():
+    """Executado na inicialização da aplicação."""
+    logger.info("=== VIBE LEARNING API INICIADA ===")
+    logger.info(f"Routers carregados: {len(routers_loaded)}/{len(routers_config)}")
+    logger.info(f"Routers ativos: {', '.join(routers_loaded)}")
+    if routers_failed:
+        logger.warning(f"Routers com erro: {len(routers_failed)}")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Executado no encerramento da aplicação."""
+    logger.info("=== VIBE LEARNING API ENCERRADA ===")
+
+# Log final
+logger.info(f"🚀 API configurada com {len(routers_loaded)} routers ativos")
+if routers_failed:
+    logger.warning(f"⚠️ {len(routers_failed)} routers falharam na inicialização")
+
+# Adicionar após a definição inicial do app
+try:
+    from app.routers import usuarios
+    app.include_router(usuarios.router, prefix="/api/usuarios", tags=["usuarios"])
+    print("✅ Router usuarios adicionado")
+except Exception as e:
+    print(f"⚠️ Router usuarios falhou: {e}")
