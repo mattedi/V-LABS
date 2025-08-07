@@ -61,16 +61,16 @@ def garantir_colecao():
 # Funções de indexação e busca
 # =============================================================================
 
-def indexar_documento(doc_id: str, vetor: list[float], payload: dict):
+def indexar_documento(collection_name: str, doc_id: str, vetor: list[float], payload: dict):
     """
-    Indexa um documento (ponto) na coleção Qdrant.
+    Indexa um documento (ponto) na coleção Qdrant especificada.
     """
     try:
         qdrant.upsert(
-            collection_name=QDRANT_COLLECTION,
+            collection_name=collection_name,
             points=[PointStruct(id=doc_id, vector=vetor, payload=payload)]
         )
-        logger.info(f"Documento {doc_id} indexado na coleção {QDRANT_COLLECTION}.")
+        logger.info(f"Documento {doc_id} indexado na coleção {collection_name}.")
     except UnexpectedResponse as e:
         logger.error(f"Erro na resposta do Qdrant: {e}")
         raise
@@ -78,13 +78,13 @@ def indexar_documento(doc_id: str, vetor: list[float], payload: dict):
         logger.error(f"Erro inesperado ao indexar documento {doc_id}: {e}")
         raise
 
-def buscar_por_texto(vetor: list[float], limit: int = 5):
+def buscar_por_texto(collection_name: str, vetor: list[float], limit: int = 5):
     """
-    Realiza busca por similaridade com base em vetor.
+    Realiza busca por similaridade com base em vetor na coleção especificada.
     """
     try:
         resultados = qdrant.search(
-            collection_name=QDRANT_COLLECTION,
+            collection_name=collection_name,
             query_vector=vetor,
             limit=limit,
             with_payload=True

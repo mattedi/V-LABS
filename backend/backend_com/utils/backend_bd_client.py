@@ -8,7 +8,7 @@ com o serviço de persistência do V-LABS.
 import httpx
 import time
 from typing import Dict, Any, Optional, List
-from config import get_settings
+from ..config import get_settings
 
 
 class BackendBDClient:
