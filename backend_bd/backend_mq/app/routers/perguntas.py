@@ -70,7 +70,7 @@ def atualizar(pergunta_id: str, pergunta: Pergunta):
         # Atualizar índice no Qdrant
         vetor = gerar_vetor(pergunta.texto)
         payload = {**pergunta.dict(), "id": pergunta_id}
-        indexar_documento("perguntas", pergunta_id, vetor, payload)
+        #indexar_documento("perguntas", pergunta_id, vetor, payload)
         
         return {"mensagem": "Pergunta atualizada"}
     except HTTPException:
