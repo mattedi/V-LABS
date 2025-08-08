@@ -146,3 +146,11 @@ try:
     print("✅ Router usuarios adicionado")
 except Exception as e:
     print(f"⚠️ Router usuarios falhou: {e}")
+
+# Adicionar após os outros routers
+try:
+    from app.routers import conversas
+    app.include_router(conversas.router, prefix="/api/conversas", tags=["conversas"])
+    print("✅ Router conversas carregado")
+except Exception as e:
+    print(f"⚠️ Router conversas falhou: {e}")
