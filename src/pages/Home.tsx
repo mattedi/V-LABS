@@ -8,20 +8,28 @@
  * - Interface de chat integrada
  * - Seleção de tipos de tutoria
  * 
- * @returns {JSX.Element} Componente da página inicial
+ // src/pages/Home.tsx
+/**
+ * Página inicial (Chat + Tutorias + Recomendações)
+ * - Mantém a lógica existente de feedback/redirects
+ * - Adiciona:
+ *   (1) Lista de mensagens com rolagem vertical própria
+ *   (2) Barra de memória da interação (rolagem horizontal) acima do input
  */
 
+// src/pages/Home.tsx
+/**
+ * Página inicial (Chat + Tutorias + Recomendações)
+ * - Mantém a lógica existente de feedback/redirects
+ * - Adiciona:
+ *   (1) Barra de memória da interação (rolagem horizontal) logo abaixo do título
+ *   (2) Disparo de evento para alimentar a memória ao enviar mensagem
+ */
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// Componentes de chat
 import { ChatBar } from '../components/chat';
 import MessageList from '../components/chat/MessageList';
-
-// Componentes de tutoria
 import { TutorButtons } from '../components/tutoring';
-
-// Contextos
 import { useAppContext } from '../context/AppContext';
 import { useProgressContext } from '../context/ProgressContext';
 import { useAiFeedback } from '../hooks/useAiFeedback';
@@ -32,70 +40,68 @@ export default function Home(): JSX.Element {
   const { currentMode } = useAppContext();
   const { recommendedContent } = useProgressContext();
 
-  // Estado e lógica de envio de mensagens
   const [lastQuestion, setLastQuestion] = useState('');
   const [lastContentId, setLastContentId] = useState('');
   const { feedback, isLoading, requestAnalysis } = useAiFeedback();
 
+  // Memória simulada de interações
+  const [memory, setMemory] = useState<string[]>([
+    'Como que é um denominador?',
+    'O que são frações?'
+  ]);
+
   const handleSend = async (message: string) => {
     const trimmed = message.trim();
     if (!trimmed) return;
-
+    setMemory(prev => [trimmed, ...prev]); // adiciona na memória
     const contentId = `home-${Date.now()}`;
     setLastQuestion(trimmed);
     setLastContentId(contentId);
     await requestAnalysis(contentId, trimmed, 'text');
   };
 
-  // Redirecionamento automático conforme o modo selecionado
   useEffect(() => {
     if (currentMode === 'equation') navigate('/equation');
     else if (currentMode === 'voice') navigate('/voice');
     else if (currentMode === 'image') navigate('/image');
   }, [currentMode, navigate]);
 
-  // Renderização das recomendações
-  const renderRecommendations = () => {
-    if (recommendedContent.length === 0) return null;
-
-    return (
-      <div className="mt-8 p-4 bg-gray-400 rounded-lg">
-        <h3 className="text-xl font-semibold text-[#B0D2FF]">Recomendado para você</h3>
-        <ul className="mt-2">
-          {recommendedContent.map(item => (
-            <li
-              key={item.id}
-              className="py-2 cursor-pointer hover:bg-gray-700 px-3 rounded-md"
-              onClick={() => navigate(`/${item.mode}`)}
-            >
-              {item.title}
-              <span className="text-xs bg-blue-500 px-2 py-1 rounded-full ml-2">
-                {item.difficulty}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  };
-
   return (
-    <>
-      {/* Título principal */}
+    <div className="flex flex-col items-center">
       <h2 className="mt-9 text-center text-4xl font-bold text-[#B0D2FF]">
         Bem vindo Vibe Learning Studio
       </h2>
 
-      {/* Lista de mensagens simuladas */}
-      <MessageList />
+      {/* Memória da interação com scroll */}
+      <div className="w-full max-w-4xl mt-4">
+        <h4 className="text-sm font-semibold text-gray-300 mb-2">Memória da interação</h4>
+        <div className="bg-gray-800 rounded-lg p-2 max-h-28 overflow-y-auto">
+          {memory.map((item, idx) => (
+            <div
+              key={idx}
+              className="bg-gray-700 p-2 rounded mb-1 cursor-pointer hover:bg-gray-600"
+              onClick={() => handleSend(item)}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
 
-      {/* Barra de entrada com envio funcional */}
-      <ChatBar
-        onSend={handleSend}
-        placeholder="Ex. Como eu faço para calcular uma fração..."
-      />
+      {/* Lista de mensagens */}
+      <div className="w-full max-w-4xl flex-1 overflow-y-auto my-4">
+        <MessageList />
+      </div>
 
-      {/* Feedback gerado (opcional) */}
+      {/* Barra de entrada */}
+      <div className="w-full max-w-4xl">
+        <ChatBar
+          onSend={handleSend}
+          placeholder="Ex. Como eu faço para calcular uma fração..."
+        />
+      </div>
+
+      {/* Feedback */}
       {feedback && (
         <div className="mt-6 max-w-4xl mx-auto">
           <AiFeedbackPanel
@@ -106,17 +112,37 @@ export default function Home(): JSX.Element {
         </div>
       )}
 
-      {/* Botões de seleção de tutoria */}
+      {/* Botões de tutoria */}
       <h3 className="mt-9 text-center text-3xl">
         <span className="text-[#B0D2FF]">Escolha sua tutoria</span>
       </h3>
       <TutorButtons />
 
-      {/* Recomendações personalizadas */}
-      {renderRecommendations()}
-    </>
+      {/* Recomendações */}
+      {recommendedContent.length > 0 && (
+        <div className="mt-8 p-4 bg-gray-400 rounded-lg w-full max-w-4xl">
+          <h3 className="text-xl font-semibold text-[#B0D2FF]">Recomendado para você</h3>
+          <ul className="mt-2">
+            {recommendedContent.map(item => (
+              <li
+                key={item.id}
+                className="py-2 cursor-pointer hover:bg-gray-700 px-3 rounded-md"
+                onClick={() => navigate(`/${item.mode}`)}
+              >
+                {item.title}
+                <span className="text-xs bg-blue-500 px-2 py-1 rounded-full ml-2">
+                  {item.difficulty}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }
+
+
 
 // EXTENSÕES:
 // - Adicionar animações de transição ao navegar entre modos de tutoria.
