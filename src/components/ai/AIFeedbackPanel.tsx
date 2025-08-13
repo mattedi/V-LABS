@@ -93,7 +93,7 @@ ${nextSteps.join('\n')}
     return (
       <div className="bg-white p-6 rounded-lg shadow text-center" aria-busy="true">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 inline-block mb-2" />
-        <p className="text-gray-600">Analisando complexidade da pergunta...</p>
+        <p className="text-gray-600"> Analisando complexidade da pergunta...</p>
       </div>
     );
   }

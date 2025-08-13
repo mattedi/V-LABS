@@ -5,6 +5,7 @@
     "./backend_bd/backend_mq/app",
     "./backend_bd"
   ],
+  
   "python.defaultInterpreterPath": "./venv/Scripts/python.exe",
   "python.terminal.activateEnvironment": true,
   "python.linting.enabled": true,

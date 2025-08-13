@@ -51,3 +51,31 @@ except Exception as e:
     colecao_configuracoes = None
     colecao_modos_entrada = None
     colecao_logs_interacao = None
+
+# === Compatibilidade com routers ===
+from typing import Optional, Dict, Any, List
+
+# Coleção de conversas (segue o padrão das demais coleções no módulo)
+try:
+    colecao_conversas = db.conversas
+except Exception:
+    colecao_conversas = None
+
+def salvar_interacao(dados: Dict[str, Any]):
+    """
+    Insere uma interação na coleção 'interacoes' e retorna o ObjectId inserido.
+    """
+    if db is None:
+        raise RuntimeError("MongoDB não inicializado")
+    res = db.interacoes.insert_one(dados)
+    return res.inserted_id
+
+def obter_interacoes(filtro: Optional[Dict[str, Any]] = None, limite: int = 100) -> List[Dict[str, Any]]:
+    """
+    Retorna lista de interações de acordo com o filtro (opcional).
+    """
+    if db is None:
+        raise RuntimeError("MongoDB não inicializado")
+    filtro = filtro or {}
+    cur = db.interacoes.find(filtro).limit(limite)
+    return list(cur)

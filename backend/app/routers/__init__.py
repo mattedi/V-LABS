@@ -1,0 +1,1 @@
+from backend.backend_com.utils.backend_bd_client import get_backend_bd_client
