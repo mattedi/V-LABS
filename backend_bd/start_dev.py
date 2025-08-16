@@ -31,7 +31,7 @@ if app_path not in sys.path:
 # IMPORTAÇÃO DOS ROUTERS
 # =============================================================================
 try:
-    from routers import (
+    from router import (
         usuarios,
         avaliacoes,
         logs,

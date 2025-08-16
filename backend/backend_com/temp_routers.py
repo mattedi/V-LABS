@@ -20,8 +20,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, current_dir)
 
 # Imports absolutos - SEM pontos
-import config
-import routers
+import backend_com.config as config
+from backend.backend_com import routers
 import utils
 
 # Configura logging estruturado

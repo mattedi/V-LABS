@@ -8,7 +8,7 @@ respostas, avaliações e busca semântica de conteúdo.
 from fastapi import APIRouter, HTTPException, Depends, Query, status
 from typing import Dict, Any, Optional, List
 
-from ..models import (
+from ..models import (  # Módulo não existe
     PerguntaRequest,
     PerguntaResponse,
     RespostaRequest, 
@@ -23,7 +23,7 @@ from ..models import (
     ErrorResponse
 )
 from ..orchestration import EducationalOrchestrator
-from ..routers.auth import get_current_user_dependency
+from backend.backend_com.routers.auth import get_current_user_dependency
 from ..utils.logging import setup_logger, RequestLogger
 
 # Configuração do router

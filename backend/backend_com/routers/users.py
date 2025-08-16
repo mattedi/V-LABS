@@ -17,7 +17,7 @@ from ..models import (
     ErrorResponse
 )
 from ..orchestration import UserOrchestrator
-from ..routers.auth import get_current_user_dependency
+from backend.backend_com.routers.auth import get_current_user_dependency
 from ..utils.logging import setup_logger, RequestLogger
 
 # Configuração do router

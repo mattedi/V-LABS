@@ -19,10 +19,10 @@ if __name__ == "__main__":
     
     try:
         # Tenta importar para verificar se tudo está OK
-        import config
+        import backend_com.config as config
         print("✅ Config carregado")
-        
-        import routers
+        from backend.backend_com import routers
+    
         print("✅ Routers carregados")
         
         import utils
